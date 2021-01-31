@@ -2,6 +2,7 @@ from os import environ
 from flask import Flask 
 from . import db
 from . import auth
+from . import blog
 
 def create_app():
     app = Flask(__name__)
@@ -15,6 +16,7 @@ def create_app():
     db.init_app(app)
 
     app.register_blueprint(auth.bp)
+    app.register_blueprint(blog.bp)
 
     @app.route('/hola')
     def hola():
