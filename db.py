@@ -22,8 +22,8 @@ def close_db(e=None):
 
 def init_db():
     db, c = get_db()
-    for i in constl:
-        c.execute(i)
+    for sql_command in constl:
+        c.execute(sql_command)
     db.commit()
 
 @click.command('init_db')
