@@ -1,6 +1,7 @@
 from os import environ
 from flask import Flask 
 from . import db
+from . import auth
 
 def create_app():
     app = Flask(__name__)
@@ -12,6 +13,8 @@ def create_app():
         DATABASE=environ.get('FLASK_DATABASE')
     )
     db.init_app(app)
+
+    app.register_blueprint(auth.bp)
 
     @app.route('/hola')
     def hola():
