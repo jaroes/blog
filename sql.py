@@ -19,10 +19,8 @@ constl = [
                 birthday TIMESTAMP,
                 bio VARCHAR(300),
                 direction VARCHAR(50),
-                owner INT UNIQUE NOT NULL,
                 pfp VARCHAR(50),
-                anniversary TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (owner) REFERENCES user (id)
+                anniversary TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         """,
         """
