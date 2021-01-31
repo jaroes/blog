@@ -30,12 +30,8 @@ def register():
         
         if error is None:
             c.execute(
-                'insert into user (email, password) values (%s, %s)',
-                (email, generate_password_hash(password))
-            )
-            c.execute (
-                'insert into profile (username) values (%s)',
-                (username, )
+                'insert into user (email, password, username) values (%s, %s, %s)',
+                (email, generate_password_hash(password), username)
             )
             db.commit()
             return redirect(url_for('auth.login'))
