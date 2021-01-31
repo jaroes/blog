@@ -22,15 +22,15 @@ def close_db(e=None):
 
 def init_db():
     db, c = get_db()
-    for sql_command in constl:
-        c.execute(sql_command)
+    for sql_inst in constl:
+        c.execute(sql_inst)
     db.commit()
 
 @click.command('init_db')
 @with_appcontext
 def init_db_command():
     init_db()
-    click.echo('DB inicialized')
+    click.echo('DB setted')
 
 def init_app(app):
     app.teardown_appcontext(close_db)
