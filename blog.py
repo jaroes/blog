@@ -5,6 +5,7 @@ from flask import (
 )
 
 from werkzeug import exceptions
+from blogpage import auth
 from blogpage.auth import login_required
 from blogpage.db import get_db
 
@@ -31,6 +32,30 @@ def index():
         if len(posts) == 6:
             pages = True
         
-        return render_template('blog/blog.html', posts=posts, next=pages, author=g.user['username'])
+        return render_template('blog/index.html', posts=posts, next=pages, author=g.user['username'])
+
+
+@bp.route('/create', methods=['GET', 'POST'])
+@login_required
+def create():
+    if request.method == 'POST':
+        error = None
+        title = request.form['title']
+        content = request.form['content']
+        author = g.user['id']
+        db, cursor = get_db()
+
+        if title is None or content is None:
+            return 'Rellena todos los campos!'
+        
+        cursor.execute(
+            'insert into post (created_by, title, content) values (%s, %s, %s)',
+            (author, title, content)
+        )
+        db.commit()
+        return redirect(url_for('blog.index'))
+    return render_template('blog/create.html')
+
+
 
     

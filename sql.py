@@ -31,7 +31,7 @@ constl = [
                 title VARCHAR(80) NOT NULL,
                 content TEXT NOT NULL,
                 likes INT NOT NULL DEFAULT 0,
-                FOREIGN KEY (created_by) REFERENCES profile (id)
+                FOREIGN KEY (created_by) REFERENCES user (id)
             );
         """,
         """
