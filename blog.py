@@ -14,6 +14,7 @@ bp = Blueprint('blog', __name__)
 @login_required
 def index():
     pages = False
+    author = None
     db, cursor = get_db()
 
     cursor.execute (
@@ -30,6 +31,6 @@ def index():
         if len(posts) == 6:
             pages = True
         
-        return render_template('blog/blog.html', posts=posts, next=pages)
+        return render_template('blog/blog.html', posts=posts, next=pages, author=g.user['username'])
 
     

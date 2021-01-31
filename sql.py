@@ -8,6 +8,7 @@ constl = [
         """
             CREATE TABLE user (
                 id INT PRIMARY KEY AUTO_INCREMENT,
+                username VARCHAR(50) UNIQUE NOT NULL,
                 email VARCHAR(50) UNIQUE NOT NULL,
                 password VARCHAR(100) NOT NULL
             )
@@ -15,7 +16,6 @@ constl = [
         """
             CREATE TABLE profile (
                 id INT PRIMARY KEY AUTO_INCREMENT,
-                username VARCHAR(50) UNIQUE NOT NULL,
                 birthday TIMESTAMP,
                 bio VARCHAR(300),
                 direction VARCHAR(50),
