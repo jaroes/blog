@@ -4,7 +4,7 @@ from flask import (
     url_for
 )
 
-from werkzeug import exceptions
+from werkzeug.exceptions import abort
 from blogpage import auth
 from blogpage.auth import login_required
 from blogpage.db import get_db
