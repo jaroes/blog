@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Blog{% endblock %}
+{% block title %}Timeline{% endblock %}
 
 {% block ti %}Main Page{% endblock %}
 
@@ -13,10 +13,14 @@
     <br />
     {% for post in posts %}
     <div class="posts">
-        <div>Autor: {{ post.username }}</div>
-        <div>{{ post.created_at }}</div>
-        <div>{{ post.title }}</div>
+        <div class="posthead">
+            <div class='title'><strong>{{ post.title }}</strong></div>
+            <span class="details">Autor: {{ post.username }}</span>
+            <span class="details">{{ post.created_at }}</span>
+            <span><a href="/edit/{{ post.id }}">Editar Post!</a></span>
+        </div>
         <div>{{ post.content }}</div>
+        <br />
     </div>
     <br />
     {% endfor %}

@@ -51,5 +51,43 @@ def create():
     return render_template('blog/create.html')
 
 
+@bp.route('/edit/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def edit(post_id):
+    db, cursor = get_db();
+    
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        cursor.execute(
+            '''
+            update post set content = %s, title = %s \
+            where id = %s and created_by = %s
+            ''', (content, title, post_id, g.user['id'])
+        )
+        db.commit()
+        return redirect(url_for('blog.index'))
+    
+    cursor.execute(
+        '''
+        select p.id, p.title, p.content, p.created_by \
+        from post p where p.created_by = %s and p.id = %s
+        ''', (g.user['id'], post_id)
+    )
+    pst = cursor.fetchone()
+    if pst is None:
+        flash('No puedes editar post que no sea tuyos!!')
+        return redirect(url_for('blog.index'))
+    
+    return render_template('blog/edit.html', posts=pst)
+
+
+bp.route('/delete/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def delete():
+    return redirect(url_for('blog.index'))
+    
+
+
 
     

@@ -25,3 +25,31 @@ body {
     margin-bottom: 17px;
 }
 
+.posthead {
+    border-bottom: 3px;
+    border-bottom-style: solid;
+    border-bottom-color: ivory;
+}
+
+.posts {
+    display: flex;
+    flex-flow: column wrap;
+    border-width: 3px;
+    border-style: solid;
+    border-color: ivory;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    width: 40%;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+.details {
+    color: lightgrey;
+    font-size: smaller;
+}
+
+.title {
+    text-align: center;
+}
+
