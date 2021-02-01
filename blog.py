@@ -19,20 +19,14 @@ def index():
     db, cursor = get_db()
 
     cursor.execute (
-        'select * from post where id = %s limit 1', (g.user['id'], ) 
+        '''
+        select p.id, p.title, p.content, p.created_by, u.username \
+        from post p join user u on p.created_by = u.id where \
+        created_by = %s limit 5
+        ''', (g.user['id'], )
     )
-    if cursor.fetchone() is None:
-        return 'ningun post'
-    else:
-        cursor.execute (
-            'select * from post where created_by = %s order by id desc limit 6', (g.user['id'], )
-        )
-        
-        posts = cursor.fetchall()
-        if len(posts) == 6:
-            pages = True
-        
-        return render_template('blog/index.html', posts=posts, next=pages, author=g.user['username'])
+    posts = cursor.fetchall() 
+    return render_template('blog/index.html', posts=posts, next=pages)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
@@ -41,18 +35,19 @@ def create():
     if request.method == 'POST':
         error = None
         title = request.form['title']
+        title = None
         content = request.form['content']
         author = g.user['id']
         db, cursor = get_db()
 
         if title is None or content is None:
-            return 'Rellena todos los campos!'
-        
-        cursor.execute(
-            'insert into post (created_by, title, content) values (%s, %s, %s)',
-            (author, title, content)
-        )
-        db.commit()
+            flash('Rellena todos los campos!')
+        else:
+            cursor.execute(
+                'insert into post (created_by, title, content) values (%s, %s, %s)',
+                (author, title, content)
+            )
+            db.commit()
         return redirect(url_for('blog.index'))
     return render_template('blog/create.html')
 

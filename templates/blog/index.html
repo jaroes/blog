@@ -6,10 +6,12 @@
 
 {% block content %}
     <a href="/create">Crear un nuevo post!</a>
+    <a href="/auth/logout">Logout</a>
+    <a href="/auth/login">Cambiar de cuenta</a>
     <br />
     {% for post in posts %}
         <div class="posts">
-            <div>Autor: {{ author }}</div>
+            <div>Autor: {{ post.username }}</div>
             <div>{{ post.created_at }}</div>
             <div>{{ post.title }}</div>
             <div>{{ post.content }}</div>

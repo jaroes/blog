@@ -1,0 +1,15 @@
+body {
+    background-color: #eee;
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.navbar {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    color: white;
+    background-color: grey;
+    position: fixed;
+}

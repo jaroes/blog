@@ -2,7 +2,7 @@
 <html>
     <head>
         <title>{% block title %}{% endblock %}</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css" />
     </head>
     <body>
         <div>
@@ -11,6 +11,15 @@
                 <div>{% block ti %}{% endblock %}</div>
                 <div>Usuario creo</div>
             </div>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <ul class=flashes>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
             <div class="cuerpo">
                 <div>
                     {% block content %}{% endblock %}
