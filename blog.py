@@ -20,8 +20,9 @@ def index():
 
     cursor.execute (
         '''
-        select p.id, p.title, p.content, p.created_by, u.username \
-        from post p join user u on p.created_by = u.id where \
+        select p.id, p.title, p.content, p.created_by, \
+        u.username, p.created_at from post p join \
+        user u on p.created_by = u.id where \
         created_by = %s limit 5
         ''', (g.user['id'], )
     )
@@ -33,9 +34,7 @@ def index():
 @login_required
 def create():
     if request.method == 'POST':
-        error = None
         title = request.form['title']
-        title = None
         content = request.form['content']
         author = g.user['id']
         db, cursor = get_db()

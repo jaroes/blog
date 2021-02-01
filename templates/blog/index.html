@@ -5,17 +5,19 @@
 {% block ti %}Main Page{% endblock %}
 
 {% block content %}
-    <a href="/create">Crear un nuevo post!</a>
-    <a href="/auth/logout">Logout</a>
-    <a href="/auth/login">Cambiar de cuenta</a>
+    <div class="navi">
+        <a href="/create">Crear un nuevo post!  </a>
+        <a href="/auth/logout">  Logout  </a>
+        <a href="/auth/login">Cambiar de cuenta</a>
+    </div>
     <br />
     {% for post in posts %}
-        <div class="posts">
-            <div>Autor: {{ post.username }}</div>
-            <div>{{ post.created_at }}</div>
-            <div>{{ post.title }}</div>
-            <div>{{ post.content }}</div>
-        </div>
-        <br />
+    <div class="posts">
+        <div>Autor: {{ post.username }}</div>
+        <div>{{ post.created_at }}</div>
+        <div>{{ post.title }}</div>
+        <div>{{ post.content }}</div>
+    </div>
+    <br />
     {% endfor %}
 {% endblock %}
