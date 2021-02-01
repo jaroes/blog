@@ -5,11 +5,11 @@
 {% block ti %}Making a post{% endblock %}
 
 {% block content %}
-<form method="post">
+<form method="post" class="create">
     <label for="title">Titulo del post</label>
     <input name="title" id="title" required />
     <label for="content">Contenido del post</label>
-    <input name="content" id="content" type="text" required />
+    <input class="cajatexto" name="content" id="content" type="text" required />
     <input type="submit" value="Postear!" />
 </form>
 {% endblock %}

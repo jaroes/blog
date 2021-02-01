@@ -28,24 +28,26 @@ body {
 .posthead {
     border-bottom: 3px;
     border-bottom-style: solid;
-    border-bottom-color: ivory;
+    border-bottom-color: rgba(0,0,0,0.3);
 }
 
 .posts {
     display: flex;
     flex-flow: column wrap;
-    border-width: 3px;
+    border-width: 2px;
     border-style: solid;
-    border-color: ivory;
+    border-color: rgba(0,0,0,0.3);
+    border-radius: 4px;
     margin-top: 8px;
     margin-bottom: 8px;
     width: 40%;
     margin-left: 30%;
     margin-right: 30%;
+    background-color: white;
 }
 
 .details {
-    color: lightgrey;
+    color: goldenrod;
     font-size: smaller;
 }
 
@@ -53,3 +55,18 @@ body {
     text-align: center;
 }
 
+.create {
+    display: flex;
+    flex-flow: column nowrap;
+    width: 40%;
+    margin-left: 30%;
+    margin-right: 30%;
+    height: 300px;
+}
+
+.cajatexto {
+    display: flex;
+    flex-flow: row wrap;
+    height: 100%;
+    align-content: flex-start;
+}

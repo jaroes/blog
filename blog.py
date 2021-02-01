@@ -82,10 +82,32 @@ def edit(post_id):
     return render_template('blog/edit.html', posts=pst)
 
 
-bp.route('/delete/<int:post_id>', methods=['GET', 'POST'])
+@bp.route('/delete/<int:post_id>', methods=['GET', 'POST'])
 @login_required
-def delete():
-    return redirect(url_for('blog.index'))
+def delete(post_id):
+    db, cursor = get_db()
+    if request.method == 'POST':
+        cursor.execute(
+            '''
+            delete from post where \
+            id = %s and created_by = \
+            %s
+            ''', (post_id, g.user['id'])
+        )
+        db.commit()
+        return redirect(url_for('blog.index'))
+    cursor.execute(
+        '''
+        select p.id, p.title, p.content, p.created_by \
+        from post p where p.created_by = %s and p.id = %s
+        ''', (g.user['id'], post_id)
+    )
+    pst = cursor.fetchone()
+    if pst is None:
+        flash('No puedes eliminar el post de alguien más')
+        return redirect(url_for('blog.index'))
+    
+    return render_template('blog/delete.html', post=pst)
     
 
 
