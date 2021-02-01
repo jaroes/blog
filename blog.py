@@ -20,14 +20,32 @@ def index():
 
     cursor.execute (
         '''
-        select p.id, p.title, p.content, p.created_by, \
-        u.username, p.created_at from post p join \
-        user u on p.created_by = u.id where \
-        created_by = %s limit 5
-        ''', (g.user['id'], )
+        select p.id, p.title, p.content, \
+        p.created_by, p.created_at, u.username \
+        from post p inner join user u on p.created_by \
+        = u.id order by p.id desc
+        '''
     )
     posts = cursor.fetchall() 
     return render_template('blog/index.html', posts=posts, next=pages)
+
+@bp.route('/profile')
+@login_required
+def profile():
+    pages = False
+    author = None
+    db, cursor = get_db()
+
+    cursor.execute (
+        '''
+        select p.id, p.title, p.content, p.created_by, \
+        u.username, p.created_at from post p join \
+        user u on p.created_by = u.id where \
+        created_by = %s order by p.id desc limit 5
+        ''', (g.user['id'], )
+    )
+    posts = cursor.fetchall() 
+    return render_template('blog/profile.html', posts=posts, next=pages)
 
 
 @bp.route('/create', methods=['GET', 'POST'])

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block ti %}{{ posts[0].username }}{% endblock %}
+
+{% block content %}
+    <div class="navi">
+        <a href="/create">Crear un nuevo post!  </a>
+        <a href="/auth/logout">  Logout  </a>
+        <a href="/auth/login">Cambiar de cuenta</a>
+    </div>
+    <br />
+    {% for post in posts %}
+    <div class="posts">
+        <div class="posthead">
+            <div class='title'><strong>{{ post.title }}</strong></div>
+            <span class="details">Autor: {{ post.username }}</span>
+            <span class="details">{{ post.created_at }}</span>
+            <span class="details">{{ post.id }}</span>
+            <span><a href="/edit/{{ post.id }}">Editar</a></span>
+            <span><a href="/delete/{{ post.id }}">Borrar</a></span>
+        </div>
+        <div>{{ post.content }}</div>
+        <br />
+    </div>
+    <br />
+    {% endfor %}
+{% endblock %}
