@@ -4,6 +4,13 @@
 
 {% block ti %}Conectarse{% endblock %}
 
+{% block loginzone %}
+    <div class="nav_e">
+        <a href='/auth/login'>Login</a>
+        <a href='/auth/register'>Register</a>
+    </div>
+{% endblock %}
+
 {% block content %}
     <a href="/auth/register">Registrate!</a>
     <form method="post">

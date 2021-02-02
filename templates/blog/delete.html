@@ -4,6 +4,12 @@
 
 {% block ti %}Borrar un post{% endblock %}
 
+{% block loginzone %}
+    <div class="nav_e">
+        <a href='/profile'>{{ posts[0].username }}</a>
+    </div>
+{% endblock %}
+
 {% block content %}
     <div class="navi">
         <a href="/create">Crear un nuevo post!  </a>

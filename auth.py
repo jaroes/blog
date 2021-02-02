@@ -51,10 +51,13 @@ def login():
                 )
         user = c.fetchone()
         
-        if email is None:
+        if user is None:
             error = 'Email y/o contraseña invalida'
-        elif not check_password_hash(user['password'], password):
-            error = "Usuario y/o contraseña invalida"
+        else:
+            if email is None:
+                error = 'Email y/o contraseña invalida'
+            elif check_password_hash(user['password'], password):
+                error = 'Email y/o contraseña invalida'
 
         if error is None:
             #por si acaso limpiaresmo el dato de

@@ -44,7 +44,7 @@ def profile():
         created_by = %s order by p.id desc limit 5
         ''', (g.user['id'], )
     )
-    posts = cursor.fetchall() 
+    posts = cursor.fetchall()
     return render_template('blog/profile.html', posts=posts, next=pages)
 
 
@@ -126,6 +126,24 @@ def delete(post_id):
         return redirect(url_for('blog.index'))
     
     return render_template('blog/delete.html', post=pst)
+
+
+@bp.route('/deleteuser', methods=['GET', 'POST'])
+@login_required
+def deleteuser():
+    if request.method == 'POST':
+        db, cursor = get_db()
+        deluser = [
+            'delete from post where created_by = %s',
+            'delete from user where id = %s',
+            'delete from profile where id = %s'
+        ]
+        for query in deluser:
+            cursor.execute(query, (g.user['id'], ))
+        db.commit()
+        return redirect(url_for('auth.logout'))
+    return render_template('blog/deleteuser.html')
+
     
 
 
