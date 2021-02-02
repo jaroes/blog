@@ -27,7 +27,7 @@ def index():
         '''
     )
     posts = cursor.fetchall() 
-    return render_template('blog/index.html', posts=posts, next=pages)
+    return render_template('blog/index.html', posts=posts, name=g.user['username'])
 
 @bp.route('/profile')
 @login_required
@@ -50,11 +50,14 @@ def profile():
         '''
         select p.birthday, p.bio, \
         p.direction, p.pfp, p.anniversary \
-        from profile where p.id = %s
+        from profile p where p.id = %s
         ''', (g.user['id'], )
     )
     user_info = cursor.fetchone()
-    return render_template('blog/profile.html', posts=posts, pf=user_info)
+    return render_template(
+        'blog/profile.html',posts=posts,
+        pf=user_info,name=g.user['username']
+    )
 
 
 @bp.route('/create', methods=['GET', 'POST'])

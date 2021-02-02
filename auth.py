@@ -34,7 +34,7 @@ def register():
                 (email, generate_password_hash(password), username)
             )
             c.execute(
-                'insert into profile (pfp) values (%s)', ('https://pbs.twimg.com/profile_images/1345798187819421697/CHxByeCY_400x400.jpg', )
+                'insert into profile (pfp) values (%s)', ('https://placekitten.com/200/300', )
             )
             db.commit()
             return redirect(url_for('auth.login'))
