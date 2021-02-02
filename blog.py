@@ -39,25 +39,22 @@ def profile():
     cursor.execute (
         '''
         select p.id, p.title, p.content, p.created_by, \
-        p.created_at, u.username from post p join \
-        user u on p.created_by = u.id where \
+        p.created_at from post p where \
         created_by = %s order by p.id desc limit 5
         ''', (g.user['id'], )
     )
     posts = cursor.fetchall()
 
-    '''
+    
     cursor.execute(
-        
-        select u.username, p.birth, p.bio, \
+        '''
+        select p.birthday, p.bio, \
         p.direction, p.pfp, p.anniversary \
-        from profile p join user u on p.id = \
-        u.id where p.id = %s
-        , (g.user['id'], )
+        from profile where p.id = %s
+        ''', (g.user['id'], )
     )
-    '''
-
-    return render_template('blog/profile.html', posts=posts, next=pages)
+    user_info = cursor.fetchone()
+    return render_template('blog/profile.html', posts=posts, pf=user_info)
 
 
 @bp.route('/create', methods=['GET', 'POST'])
