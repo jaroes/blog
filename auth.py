@@ -34,7 +34,7 @@ def register():
                 (email, generate_password_hash(password), username)
             )
             c.execute(
-                'insert into profile (pfp) values (%s)', ('https://placekitten.com/200/300', )
+                'insert into profile (pfp) values (%s)', ('https://placekitten.com/100/100', )
             )
             db.commit()
             return redirect(url_for('auth.login'))

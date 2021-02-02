@@ -2,7 +2,7 @@
 
 {% block title %}Perfil{% endblock %}
 
-{% block ti %}{{ name }}{% endblock %}
+{% block ti %}Tu perfil!{% endblock %}
 
 {% block loginzone %}
     <div class="nav_e">
@@ -23,6 +23,14 @@
         <div>
             <img src="{{ pf['pfp'] }}" />
         </div>
+        {% if pf['bio'] %}
+            <div>{{ pf['bio'] }}</div>
+        {% endif %}
+        {% if pf['birthday'] %}
+            <div>🥧{{ pf['birthday'] }}</div>
+        {% endif %}
+        <div>Usuario desde</div>
+        <div>{{ pf['anniversary'] }}</div>
     </div>
     {% for post in posts %}
     <div class="posts">
