@@ -19,7 +19,7 @@ constl = [
                 birthday TIMESTAMP,
                 bio VARCHAR(300),
                 direction VARCHAR(50),
-                pfp VARCHAR(50),
+                pfp VARCHAR(80),
                 anniversary TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         """,
