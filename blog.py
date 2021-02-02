@@ -119,12 +119,12 @@ def delete(post_id):
         from post p where p.created_by = %s and p.id = %s
         ''', (g.user['id'], post_id)
     )
-    pst = cursor.fetchone()
+    posts = cursor.fetchone()
     if pst is None:
         flash('No puedes eliminar el post de alguien más')
         return redirect(url_for('blog.index'))
     
-    return render_template('blog/delete.html', post=pst)
+    return render_template('blog/delete.html', post=posts)
 
 
 @bp.route('/deleteuser', methods=['GET', 'POST'])
