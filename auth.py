@@ -50,13 +50,13 @@ def login():
                 'select * from user where email = %s', (email, )
                 )
         user = c.fetchone()
-        
+
         if user is None:
             error = 'Email y/o contraseña invalida'
         else:
             if email is None:
                 error = 'Email y/o contraseña invalida'
-            elif check_password_hash(user['password'], password):
+            elif not check_password_hash(user['password'], password):
                 error = 'Email y/o contraseña invalida'
 
         if error is None:

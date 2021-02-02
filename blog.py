@@ -39,9 +39,8 @@ def profile():
     cursor.execute (
         '''
         select p.id, p.title, p.content, p.created_by, \
-        u.username, p.created_at from post p join \
-        user u on p.created_by = u.id where \
-        created_by = %s order by p.id desc limit 5
+        p.created_at from post p \
+        where created_by = %s order by p.id desc limit 5
         ''', (g.user['id'], )
     )
     posts = cursor.fetchall()
