@@ -21,7 +21,7 @@
     <div class="posts">
         <div class="posthead">
             <div class='title'><strong>{{ post.title }}</strong></div>
-            <span class="details">Autor: {{ name }}</span>
+            <a class="details" href="profile/{{ post.username }}">Autor: {{ post.username }}</a>
             <span class="details">{{ post.created_at }}</span>
             <span class="details">{{ post.id }}</span>
             <span><a href="/edit/{{ post.id }}">Editar</a></span>
