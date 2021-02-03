@@ -76,6 +76,12 @@ def create():
                 'insert into post (created_by, title, content) values (%s, %s, %s)',
                 (author, title, content)
             )
+            cursor.execute(
+                'update profile set entries = entries + 1 where id = %s', (g.user['id'], )
+            )
+            cursor.execute(
+                'update metadata set entries = entries + 1 where id = 1'
+            )
             db.commit()
         return redirect(url_for('blog.index'))
     return render_template('blog/create.html')
@@ -124,6 +130,12 @@ def delete(post_id):
             %s
             ''', (post_id, g.user['id'])
         )
+        cursor.execute(
+                'update profile set entries = entries - 1 where id = %s', (g.user['id'], )
+        )
+        cursor.execute(
+                'update metadata set entries = entries - 1 where id = 1'
+        )
         db.commit()
         return redirect(url_for('blog.index'))
     cursor.execute(
@@ -133,7 +145,7 @@ def delete(post_id):
         ''', (g.user['id'], post_id)
     )
     posts = cursor.fetchone()
-    if pst is None:
+    if posts is None:
         flash('No puedes eliminar el post de alguien más')
         return redirect(url_for('blog.index'))
     
