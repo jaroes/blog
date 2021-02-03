@@ -182,7 +182,7 @@ def delete(post_id):
         ''', (g.user['id'], post_id)
     )
     posts = cursor.fetchone()
-    if pst is None:
+    if posts is None:
         flash('No puedes eliminar el post de alguien más')
         return redirect(url_for('blog.index'))
     
