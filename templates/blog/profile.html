@@ -6,7 +6,7 @@
 
 {% block loginzone %}
     <div class="nav_e">
-        <a href='/profile'>{{ name }}</a>
+        <a href='/profile'>{{ usern }}</a>
     </div>
 {% endblock %}
 
@@ -20,7 +20,9 @@
 
     <div class="pf">
         <div>
+            {% if au %}
             <a href="editprofile">✏️</a>
+            {% endif %}
             <span>{{ name }}</span>
         </div>
         <div>

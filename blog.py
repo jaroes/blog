@@ -6,7 +6,7 @@ from flask import (
 
 from werkzeug.exceptions import abort
 from blogpage import auth
-from blogpage.auth import login_required
+from blogpage.auth import login, login_required
 from blogpage.db import get_db
 
 bp = Blueprint('blog', __name__)
@@ -29,9 +29,58 @@ def index():
     posts = cursor.fetchall() 
     return render_template('blog/index.html', posts=posts, name=g.user['username'])
 
+@bp.route('/profile/<usr>')
+def profile(usr):
+    author = True
+    pages = False
+    db, cursor = get_db()
+
+    owner = {
+        'id': g.user['id'],
+        'username': g.user['username']
+    }
+    if owner['username'] != usr:
+        cursor.execute(
+            '''
+            select id, username from user where username = %s
+            ''', (usr, )
+        )
+        owner = cursor.fetchone()
+        if owner is None:
+            return redirect(url_for('blog.index'))
+        author = None
+
+
+    cursor.execute (
+        '''
+        select p.id, p.title, p.content, p.created_by, \
+        p.created_at from post p where \
+        created_by = %s order by p.id desc limit 5
+        ''', (owner['id'], )
+    )
+    posts = cursor.fetchall()
+
+    
+    cursor.execute(
+        '''
+        select p.birthday, p.bio, \
+        p.direction, p.pfp, p.anniversary \
+        from profile p where p.id = %s
+        ''', (owner['id'], )
+    )
+    user_info = cursor.fetchone()
+    return render_template(
+        'blog/profile.html',
+        posts=posts,
+        pf=user_info,
+        name=owner['username'],
+        au=author,
+        usern=g.user['username']
+    )
+
 @bp.route('/profile')
 @login_required
-def profile():
+def profile_user():
     pages = False
     author = None
     db, cursor = get_db()
@@ -56,7 +105,7 @@ def profile():
     user_info = cursor.fetchone()
     return render_template(
         'blog/profile.html',posts=posts,
-        pf=user_info,name=g.user['username']
+        pf=user_info,name=g.user['username'], au=True
     )
 
 
@@ -181,7 +230,7 @@ def edituser():
             ''', (nm, g.user['id'])
         )
         db.commit()
-        return redirect(url_for('blog.profile'))
+        return redirect(url_for('blog.profile_user'))
     cursor.execute(
         '''
         select p.birthday, p.bio, \
