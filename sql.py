@@ -36,7 +36,7 @@ constl = [
             CREATE TABLE post (
                 id INT PRIMARY KEY AUTO_INCREMENT,
                 created_by INT NOT NULL,
-                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 title VARCHAR(80) NOT NULL,
                 content TEXT NOT NULL,
                 FOREIGN KEY (created_by) REFERENCES user (id)
