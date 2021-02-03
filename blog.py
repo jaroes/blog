@@ -30,9 +30,8 @@ def index():
     return render_template('blog/index.html', posts=posts, name=g.user['username'])
 
 @bp.route('/profile/<usr>')
-def profile(usr):
+def profile(usr, pag):
     author = True
-    pages = False
     db, cursor = get_db()
 
     owner = {
@@ -56,7 +55,7 @@ def profile(usr):
         select p.id, p.title, p.content, p.created_by, \
         p.created_at from post p where \
         created_by = %s order by p.id desc limit 5
-        ''', (owner['id'], )
+        ''', (owner['id'], ) 
     )
     posts = cursor.fetchall()
 
