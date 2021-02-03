@@ -9,6 +9,8 @@ from blogpage import auth
 from blogpage.auth import login, login_required
 from blogpage.db import get_db
 
+from datetime import datetime
+
 bp = Blueprint('blog', __name__)
 
 @bp.route('/')
@@ -21,9 +23,9 @@ def index():
     cursor.execute (
         '''
         select p.id, p.title, p.content, \
-        p.created_by, p.created_at, u.username \
+        p.created_by, p.last_modified, u.username \
         from post p inner join user u on p.created_by \
-        = u.id order by p.id desc
+        = u.id order by p.last_modified desc
         '''
     )
     posts = cursor.fetchall() 
@@ -54,8 +56,8 @@ def profile(usr):
     cursor.execute (
         '''
         select p.id, p.title, p.content, p.created_by, \
-        p.created_at from post p where \
-        created_by = %s order by p.id desc limit 5
+        p.last_modified from post p where \
+        created_by = %s order by p.last_modified desc limit 5
         ''', (owner['id'], )
     )
     posts = cursor.fetchall()
@@ -88,8 +90,8 @@ def profile_user():
     cursor.execute (
         '''
         select p.id, p.title, p.content, p.created_by, \
-        p.created_at from post p where \
-        created_by = %s order by p.id desc limit 5
+        p.last_modified from post p where \
+        created_by = %s order by p.last_modified desc limit 5
         ''', (g.user['id'], )
     )
     posts = cursor.fetchall()
@@ -140,9 +142,9 @@ def edit(post_id):
         content = request.form['content']
         cursor.execute(
             '''
-            update post set content = %s, title = %s \
-            where id = %s and created_by = %s
-            ''', (content, title, post_id, g.user['id'])
+            update post set content = %s, title = %s, \
+            last_modified = %s where id = %s and created_by = %s
+            ''', (content, title, datetime.now(), post_id, g.user['id'])
         )
         db.commit()
         return redirect(url_for('blog.index'))
@@ -158,7 +160,7 @@ def edit(post_id):
         flash('No puedes editar post que no sea tuyos!!')
         return redirect(url_for('blog.index'))
     
-    return render_template('blog/edit.html', posts=pst)
+    return render_template('blog/edit.html', posts=pst, name=g.user['id'])
 
 
 @bp.route('/delete/<int:post_id>', methods=['GET', 'POST'])
