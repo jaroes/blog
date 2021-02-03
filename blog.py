@@ -9,8 +9,6 @@ from blogpage import auth
 from blogpage.auth import login_required
 from blogpage.db import get_db
 
-from datetime import timedelta, datetime
-
 bp = Blueprint('blog', __name__)
 
 @bp.route('/')
@@ -158,7 +156,44 @@ def deleteuser():
         return redirect(url_for('auth.logout'))
     return render_template('blog/deleteuser.html')
 
-    
+
+@bp.route('/editprofile', methods=['GET', 'POST'])
+@login_required
+def edituser():
+    db, cursor = get_db()
+    if request.method == 'POST':
+        img = request.form['img']
+        nm = request.form['name']
+        bio = request.form['bio']
+        dir = request.form['dir']
+        cumple = request.form['cumple']
+        cursor.execute(
+            '''
+            update profile set bio = %s, \
+            direction = %s, pfp = %s, \
+            birthday = %s where id = %s
+            ''', (bio, dir, img, cumple, g.user['id'])
+        )
+        cursor.execute(
+            '''
+            update user set username = %s \
+            where id = %s
+            ''', (nm, g.user['id'])
+        )
+        db.commit()
+        return redirect(url_for('blog.profile'))
+    cursor.execute(
+        '''
+        select p.birthday, p.bio, \
+        p.direction, p.pfp, p.anniversary \
+        from profile p where p.id = %s
+        ''', (g.user['id'], )
+    )
+    user_info = cursor.fetchone()
+    return render_template(
+        'blog/editprofile.html', pf=user_info,
+        name=g.user['username']
+    )
 
 
 

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Perfil{% endblock %}
+
+{% block ti %}Edita tu perfil{% endblock %}
+
+{% block loginzone %}
+    <div class="nav_e">
+        <a href='/profile'>{{ name }}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="navi">
+        <a href="/create">Crear un nuevo post!  </a>
+        <a href="/auth/logout">  Logout  </a>
+        <a href="/auth/login">Cambiar de cuenta</a>
+    </div>
+    <br />
+
+    <form class="pf" method="POST">
+        <div>
+            <label for="name">Nombre:</label>
+            <input type="text" name="name" id="name" value="{{ name }}" />
+        </div>
+        <div>
+            <label for="img">Imagen nueva</label>
+            <img style="display: block;" src = "{{ pf['pfp'] }}" />
+            <input type="url" name="img" id="img" value="{{ pf['pfp'] }}" />
+        </div>
+        <div>
+            <label for="bio">Biografia:</label>
+            <textarea name="bio" id="bio" rows="15" cols="30">{{ pf['bio'] }}</textarea>
+        </div>
+        <div>
+            <label for="dir">Donde estas?</label>
+            <input name="dir" id="dir" value="{{ pf['direction'] }}"/>
+        </div>
+        <div>
+            <label for="cumple">Fecha nacimiento</label>
+            <input type="date" name="cumple" id="cumple" value="{{ pf['birthday'] }}" />
+        </div>
+        <input type="submit" value="Hacer cambios">
+    </form>
+    <a href="/profile">Cancelar</a>
+{% endblock %}

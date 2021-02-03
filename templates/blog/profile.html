@@ -19,12 +19,18 @@
     <br />
 
     <div class="pf">
-        <div>{{ name }}</div>
+        <div>
+            <a href="editprofile">✏️</a>
+            <span>{{ name }}</span>
+        </div>
         <div>
             <img src="{{ pf['pfp'] }}" />
         </div>
         {% if pf['bio'] %}
             <div>{{ pf['bio'] }}</div>
+        {% endif %}
+         {% if pf['direction'] %}
+            <div>🌎{{ pf['direction'] }}</div>
         {% endif %}
         {% if pf['birthday'] %}
             <div>🥧{{ pf['birthday'] }}</div>

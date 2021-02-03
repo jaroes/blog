@@ -16,7 +16,7 @@ constl = [
         """
             CREATE TABLE profile (
                 id INT PRIMARY KEY AUTO_INCREMENT,
-                birthday TIMESTAMP,
+                birthday DATE,
                 bio VARCHAR(300),
                 direction VARCHAR(50),
                 pfp VARCHAR(80),
