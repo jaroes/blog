@@ -32,4 +32,19 @@
     </div>
     <br />
     {% endfor %}
+    
+    {% if navi['back'] %}
+        <form method="POST" action="/{{ pag - 1 }}">
+            <button name="limit_d" id="limit_d" value="{{ posts[0].last_modified }}">
+                Atras
+            </button>
+        </form>
+    {% endif %}
+    {% if navi['next'] %}
+        <form method="POST" action="/{{ pag + 1 }}">
+            <button name="limit_t" id="limit_t" value="{{ posts[num - 1].last_modified }}">
+                Adelante
+            </button>
+        </form>
+    {% endif %}
 {% endblock %}

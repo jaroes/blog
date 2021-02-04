@@ -39,6 +39,7 @@ constl = [
                 last_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 title VARCHAR(80) NOT NULL,
                 content TEXT NOT NULL,
+                comments FLOAT(9) NOT NULL DEFAULT 0,
                 FOREIGN KEY (created_by) REFERENCES user (id)
             );
         """,
@@ -49,7 +50,6 @@ constl = [
                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                 commented_to INT UNIQUE NOT NULL,
                 content TEXT NOT NULL,
-                likes INT NOT NULL DEFAULT 0,
                 FOREIGN KEY (created_by) REFERENCES profile (id),
                 FOREIGN KEY (commented_to) REFERENCES post (id)
             );

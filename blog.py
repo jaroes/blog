@@ -8,28 +8,47 @@ from werkzeug.exceptions import abort
 from blogpage import auth
 from blogpage.auth import login, login_required
 from blogpage.db import get_db
+from blogpage.timeline import getpost, getcom, getpag
 
 from datetime import datetime
 
 bp = Blueprint('blog', __name__)
 
 @bp.route('/')
+@bp.route('/<int:pag>', methods=['GET', 'POST'])
 @login_required
-def index():
-    pages = None
-    author = None
-    db, cursor = get_db()
+def index(pag = 0):
+    limit_d = '1999-01-01 00:00:00'
+    limit_t = '2999-01-01 00:00:00'
+    way = 'desc'
+    if request.method == 'POST':
+        try:
+            if request.form['limit_d'] is not None:
+                limit_d = request.form['limit_d']
+        except:
+            way = 'desc'
 
-    cursor.execute (
-        '''
-        select p.id, p.title, p.content, \
-        p.created_by, p.last_modified, u.username \
-        from post p inner join user u on p.created_by \
-        = u.id order by p.last_modified desc
-        '''
+        try:
+            if request.form['limit_t'] is not None:
+                limit_t = request.form['limit_t']
+        except:
+            way = 'asc'
+
+    posts = getpost(limit_t, limit_d, way)
+
+    if way == 'asc':
+        posts.reverse()
+    
+    return render_template(
+        'blog/index.html', 
+        posts=posts, 
+        name=g.user['username'],
+        navi=getpag('global', pag),
+        pag=pag,
+        num=len(posts)
     )
-    posts = cursor.fetchall() 
-    return render_template('blog/index.html', posts=posts, name=g.user['username'])
+    
+
 
 @bp.route('/profile/<usr>/<int:pag>', methods=['GET', 'POST'])
 def profile(usr, pag):
