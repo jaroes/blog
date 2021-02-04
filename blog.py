@@ -79,6 +79,7 @@ def profile(usr, pag):
     user_info = cursor.fetchone()
     if user_info['entries'] > pag + 1:
         sig = True
+        
 
     return render_template(
         'blog/profile.html',
