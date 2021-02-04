@@ -9,10 +9,10 @@ constl = [
         """
             CREATE TABLE metadata (
                 id INT PRIMARY KEY AUTO_INCREMENT,
-                entries INT
+                entries FLOAT(9) DEFAULT 0
             );
         """,
-        'INSERT INTO metadata (entries) VALUES (0)',
+        'INSERT INTO metadata (entries) VALUES (0.0)',
         """
             CREATE TABLE user (
                 id INT PRIMARY KEY AUTO_INCREMENT,
@@ -28,7 +28,7 @@ constl = [
                 bio VARCHAR(300),
                 direction VARCHAR(50),
                 pfp VARCHAR(80),
-                entries INT NOT NULL DEFAULT 0,
+                entries FLOAT(9) NOT NULL DEFAULT 0,
                 anniversary TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         """,

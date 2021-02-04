@@ -16,7 +16,7 @@ bp = Blueprint('blog', __name__)
 @bp.route('/')
 @login_required
 def index():
-    pages = False
+    pages = None
     author = None
     db, cursor = get_db()
 
@@ -31,9 +31,10 @@ def index():
     posts = cursor.fetchall() 
     return render_template('blog/index.html', posts=posts, name=g.user['username'])
 
-@bp.route('/profile/<usr>')
+@bp.route('/profile/<usr>/<int:pag>', methods=['GET', 'POST'])
 def profile(usr, pag):
     author = True
+    sig = None
     db, cursor = get_db()
 
     owner = {
@@ -43,7 +44,7 @@ def profile(usr, pag):
     if owner['username'] != usr:
         cursor.execute(
             '''
-            select id, username from user where username = %s
+            select id, username, entries from user where username = %s
             ''', (usr, )
         )
         owner = cursor.fetchone()
@@ -51,33 +52,47 @@ def profile(usr, pag):
             return redirect(url_for('blog.index'))
         author = None
 
-
-    cursor.execute (
-        '''
-        select p.id, p.title, p.content, p.created_by, \
-        p.last_modified from post p where \
-        created_by = %s order by p.last_modified desc limit 5
-        ''', (owner['id'], )
-    )
+    if request.method == 'POST':
+        next = request.form['next']
+        cursor.execute (
+            'select * from post where created_by = %s and id < %s order by id desc limit 5', (owner['id'], next)
+        )
+    else:
+        cursor.execute (
+            '''
+            select p.id, p.title, p.content, p.created_by, \
+            p.last_modified from post p where \
+            p.created_by = %s order by p.id desc limit 5
+            ''', (owner['id'], )
+        )
+    
     posts = cursor.fetchall()
 
     
     cursor.execute(
         '''
         select p.birthday, p.bio, \
-        p.direction, p.pfp, p.anniversary \
+        p.direction, p.pfp, p.anniversary, p.entries \
         from profile p where p.id = %s
         ''', (owner['id'], )
     )
     user_info = cursor.fetchone()
+    if user_info['entries'] > pag + 1:
+        sig = True
+
     return render_template(
         'blog/profile.html',
         posts=posts,
         pf=user_info,
         name=owner['username'],
         au=author,
-        usern=g.user['username']
+        usern=g.user['username'],
+        si = sig,
+        nimpi = len(posts),
+        yupi = pag + 1
     )
+
+
 
 @bp.route('/profile')
 @login_required
@@ -127,10 +142,10 @@ def create():
                 (author, title, content)
             )
             cursor.execute(
-                'update profile set entries = entries + 1 where id = %s', (g.user['id'], )
+                'update profile set entries = entries + 0.2 where id = %s', (g.user['id'], )
             )
             cursor.execute(
-                'update metadata set entries = entries + 1 where id = 1'
+                'update metadata set entries = entries + 0.2 where id = 1'
             )
             db.commit()
         return redirect(url_for('blog.index'))
@@ -181,10 +196,10 @@ def delete(post_id):
             ''', (post_id, g.user['id'])
         )
         cursor.execute(
-                'update profile set entries = entries - 1 where id = %s', (g.user['id'], )
+                'update profile set entries = entries - 0.2 where id = %s', (g.user['id'], )
         )
         cursor.execute(
-                'update metadata set entries = entries - 1 where id = 1'
+                'update metadata set entries = entries - 0.2 where id = 1'
         )
         db.commit()
         return redirect(url_for('blog.index'))

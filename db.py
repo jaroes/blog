@@ -25,12 +25,6 @@ def init_db():
     for sql_inst in constl:
         c.execute(sql_inst)
     db.commit()
-    '''
-    c.execute(
-        'INSERT INTO metadata (entries) VALUES (%s)', (0, )
-    )
-    db.commit()
-    '''
 
 @click.command('init_db')
 @with_appcontext

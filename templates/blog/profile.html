@@ -6,7 +6,7 @@
 
 {% block loginzone %}
     <div class="nav_e">
-        <a href='/profile'>{{ usern }}</a>
+        <a href='/profile/{{ name }}/0'>{{ usern }}</a>
     </div>
 {% endblock %}
 
@@ -55,4 +55,11 @@
     </div>
     <br />
     {% endfor %}
+    {% if si %}
+        <form method="POST" action="/profile/{{name}}/{{ yupi }}">
+            <button type="sumbit" value="{{ posts[nimpi - 1].id }}" name="next">
+               Siguiente
+            </button>
+        </form>
+    {% endif %}
 {% endblock %}
