@@ -20,10 +20,10 @@
 
     <div class="pf">
         <div>
-            {% if au %}
+            {% if edition %}
             <a href="/editprofile">✏️</a>
             {% endif %}
-            <span>{{ name }}</span>
+            <span>{{ pf['username'] }}</span>
         </div>
         <div>
             <img src="{{ pf['pfp'] }}" />
@@ -44,7 +44,7 @@
     <div class="posts">
         <div class="posthead">
             <div class='title'><strong>{{ post.title }}</strong></div>
-            <span class="details">Autor: {{ name }}</span>
+            <span class="details">Autor: {{ post.username }}</span>
             <span class="details">{{ post.created_at }}</span>
             <span class="details">{{ post.id }}</span>
             <span><a href="/edit/{{ post.id }}">Editar</a></span>
@@ -55,10 +55,17 @@
     </div>
     <br />
     {% endfor %}
-    {% if si %}
-        <form method="POST" action="/profile/{{name}}/{{ yupi }}">
-            <button type="sumbit" value="{{ posts[nimpi - 1].id }}" name="next">
-               Siguiente
+    {% if navi['back'] %}
+        <form method="POST" action="/profile/{{ pf['username'] }}/{{ pag - 1 }}">
+            <button name="limit_d" id="limit_d" value="{{ posts[0].last_modified }}">
+                Atras
+            </button>
+        </form>
+    {% endif %}
+    {% if navi['next'] %}
+    <form method="POST" action="/profile/{{ pf['username'] }}/{{ pag + 1 }}">
+            <button name="limit_t" id="limit_t" value="{{ posts[num - 1].last_modified }}">
+                Adelante
             </button>
         </form>
     {% endif %}
