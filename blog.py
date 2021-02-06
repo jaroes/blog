@@ -284,11 +284,13 @@ def view_post(post_id, pag = 0):
         except:
             way = 'asc'
     
-    comms = getcomm_post(g.user['id'] ,post_id, limit_d, limit_t, way)
+    comms = getcomm_post(g.user['id'], post_id, limit_d, limit_t, way)
 
     if way == 'asc':
         comms.reverse()
-    
+
+    print (comms[0]['id'])
+
     return render_template(
         'blog/post.html',
         comms = comms,
@@ -380,4 +382,53 @@ def comment(post_id):
         pst = post,
         name = g.user['username']
     )
+
+
+@bp.route('/edit/comment/<int:comm_id>', methods=['GET', 'POST'])
+@login_required
+def editcomments(comm_id):
+    comm = getcom_one(g.user['id'], comm_id)
+    if comm['comment_owner'] is None:
+        flash('No puedes editar los comentarios de la peña')
+        return redirect(url_for('blog.view_post', post_id=comm['commented_to']))
+    if request.method == 'POST':
+        edited_comm = request.form['comm']
+        db, c = get_db()
+        c.execute(
+            '''
+            update comment set comm = %s where id = %s
+            ''', (edited_comm, comm_id)
+        )
+        db.commit()
+        return redirect(url_for('blog.view_post', post_id=comm['commented_to']))
+    return render_template('blog/editcomment.html', c=comm, name=g.user['username'])
+
+
+@bp.route('/delete/comment/<int:comm_id>', methods=['GET', 'POST'])
+@login_required
+def deletecomments(comm_id):
+    comm = getcom_one(g.user['id'], comm_id)
+    if comm['comment_owner'] is None:
+        flash('No puedes borrar los comentarios de la peña')
+        return redirect(url_for('blog.view_post', post_id=comm['commented_to']))
+    if request.method == 'POST':
+        db, c = get_db()
+        c.execute(
+            '''
+            delete from comment where id = %s
+            ''' , (comm_id, )
+        )
+        c.execute (
+            '''
+            update profile set comments = comments - 0.1 where id = %s
+            ''', (g.user['id'], )
+        )
+        c.execute (
+            '''
+            update post set comments = comments - 0.1 where id = %s
+            ''', (comm['commented_to'], )
+        )
+        db.commit()
+        return redirect(url_for('blog.view_post', post_id=comm['commented_to']))
+    return render_template('blog/deletecomment.html', comm=comm, name=g.user['username'])
     

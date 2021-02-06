@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit comment{% endblock %}
+
+{% block ti %}Edita tu comentario{% endblock %}
+
+{% block loginzone %}
+    <div class="nav_e">
+        <a href='/profile/{{ name }}/0'>{{ name }}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="navi">
+        <a href="/create">Crear un nuevo post!  </a>
+        <a href="/auth/logout">  Logout  </a>
+        <a href="/auth/login">Cambiar de cuenta</a>
+    </div>
+    <br />
+
+    <form class="pf" method="POST">
+        <label for="comm">Fecha nacimiento</label>
+        <input type="text" name="comm" id="comm" value="{{ c.comm }}" />
+        <input type="submit" value="Editar comentario">
+    </form>
+    <a href="/">Cancelar</a>
+{% endblock %}

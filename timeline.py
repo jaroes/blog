@@ -102,8 +102,8 @@ def getcom_one(current_user ,id):
         '''
         select c.commented_by, c.commented_at, c.commented_to, \
         c.comm, u.username, p.title, if(commented_by = %s, True, Null) \
-        as comment_ownerfrom comment c join \
-        user u join post p where p.id = c.commented_to and c.id = %s;
+        as comment_owner from comment c join \
+        user u join post p where p.id = c.commented_to and commented_by = u.id and c.id = %s;
         ''', (current_user, id)
     ) 
     return c.fetchone()
@@ -112,7 +112,7 @@ def getcomm_post(current_user, post_id, limit_d, limit_t, way):
     db, c = get_db()
     c.execute(
         '''
-        select c.commented_by, c.commented_at, c.commented_to, \
+        select c.id, c.commented_by, c.commented_at, c.commented_to, \
         c.comm, u.username, if(commented_by = %s, True, Null) as \
         comment_owner from comment c join user u \
         join post p where p.id = c.commented_to and p.id = %s \
@@ -128,7 +128,7 @@ def getcomm_profile(current_user, profile_id, limit_d, limit_t, way):
     print(current_user)
     c.execute(
         '''
-        select c.commented_by, c.commented_at, c.commented_to, \
+        select c.id, c.commented_by, c.commented_at, c.commented_to, \
         c.comm, u.username, if(commented_by = %s, True, Null) as comment_owner from comment c join user u \
         join post p where p.id = c.commented_to and u.id = %s \
         and c.commented_at > %s and c.commented_at < %s \
@@ -142,7 +142,7 @@ def getcomm_user(current_user, user_name, limit_d, limit_t, way):
     db, c = get_db()
     c.execute(
         '''
-        select c.commented_by, c.commented_at, c.commented_to, \
+        select c.id, c.commented_by, c.commented_at, c.commented_to, \
         c.comm, u.username, p.title, if(commented_by = %s, True, Null) \
         as comment_owner from comment c join user u \
         join post p where c.commented_by = u.id and u.username = %s \
@@ -151,7 +151,6 @@ def getcomm_user(current_user, user_name, limit_d, limit_t, way):
         ''' + pestructure[way], (current_user, user_name, limit_d, limit_t)
     )
     return c.fetchall()
-
 
 def getpag_i(fr, pag):
     db, c = get_db()

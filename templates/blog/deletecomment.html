@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit comment{% endblock %}
+
+{% block ti %}Edita tu comentario{% endblock %}
+
+{% block loginzone %}
+    <div class="nav_e">
+        <a href='/profile/{{ name }}/0'>{{ name }}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="navi">
+        <a href="/create">Crear un nuevo post!  </a>
+        <a href="/auth/logout">  Logout  </a>
+        <a href="/auth/login">Cambiar de cuenta</a>
+    </div>
+    <br />
+
+    <div class="posts">
+        <div class="posthead">
+            
+            <a class="details" href="/profile/{{ comm.username }}">Autor: {{ comm.username }}</a>
+            <span class="details">{{ comm.commented_at }}</span>
+        </div>
+        <div>
+            {% if comm.comment_owner %}
+                <a href="/edit/comment/{{ comm['id'] }}">Editar</a>
+                <a href="/delete/comment/{{ comm['id'] }}">Borrar</a>
+            {% endif %}
+        </div>
+        <div>{{ comm.comm }}</div>
+        <br />
+    </div>
+    <br />
+
+    <form class="pf" method="POST">
+        <input type="submit" value="Borra este comentario">
+    </form>
+    <a href="/">Cancelar</a>
+{% endblock %}

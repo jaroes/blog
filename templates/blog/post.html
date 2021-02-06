@@ -42,8 +42,8 @@
         </div>
         <div>
             {% if comm.comment_owner %}
-                <a href="edit/comment/{{ comm.id }}">Editar</a>
-                <a href="delete/comment/{{ comm.id }}">Borrar</a>
+                <a href="/edit/comment/{{ comm['id'] }}">Editar</a>
+                <a href="/delete/comment/{{ comm['id'] }}">Borrar</a>
             {% endif %}
         </div>
         <div>{{ comm.comm }}</div>
