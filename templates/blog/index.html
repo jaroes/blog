@@ -20,7 +20,11 @@
     {% for post in posts %}
     <div class="posts">
         <div class="posthead">
-            <div class='title'><strong>{{ post.title }}</strong></div>
+            <div class='title'>
+                <a href="/post/{{ post.id }}">
+                    <strong>{{ post.title }}</strong>
+                </a>
+            </div>
             <a class="details" href="profile/{{ post.username }}">Autor: {{ post.username }}</a>
             <span class="details">{{ post.last_modified }}</span>
             <span class="details">{{ post.id }}</span>

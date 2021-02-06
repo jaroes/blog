@@ -1,0 +1,120 @@
+f6fa9f7 HEAD@{0}: commit: profile remake
+014a9b9 HEAD@{1}: commit: index remake
+d83c249 HEAD@{2}: checkout: moving from master to organize
+d83c249 HEAD@{3}: commit: no, nevermind
+28fa0e5 HEAD@{4}: merge perfil: Fast-forward
+3330d9a HEAD@{5}: checkout: moving from perfil to master
+28fa0e5 HEAD@{6}: commit: paged in one way
+4dbede9 HEAD@{7}: commit (merge): adsadd
+34dc5c8 HEAD@{8}: commit: s
+fe47da6 HEAD@{9}: merge blog: Merge made by the 'recursive' strategy.
+f7f9a82 HEAD@{10}: checkout: moving from blog to perfil
+55b595f HEAD@{11}: commit: post counters and a init for metadata table in init_db
+9366595 HEAD@{12}: merge editperfil: Fast-forward
+53bd6ae HEAD@{13}: checkout: moving from editpost to blog
+cf5a066 HEAD@{14}: commit: edit post changes the created_at(now named as last_modified)
+3330d9a HEAD@{15}: merge master: Fast-forward
+ea28927 HEAD@{16}: checkout: moving from master to editpost
+3330d9a HEAD@{17}: commit: miss in editpost
+f7f9a82 HEAD@{18}: merge perfil: Fast-forward
+ea28927 HEAD@{19}: checkout: moving from perfil to master
+f7f9a82 HEAD@{20}: commit: almost done
+e3707fc HEAD@{21}: merge index: Fast-forward
+7e7eb7d HEAD@{22}: checkout: moving from index to perfil
+e3707fc HEAD@{23}: commit: actual name user appearing as a author of every post fixed - autor post now refer to profile their profile
+7e7eb7d HEAD@{24}: merge perfil: Fast-forward
+ea28927 HEAD@{25}: checkout: moving from perfil to index
+7e7eb7d HEAD@{26}: commit: profiles now are public
+9366595 HEAD@{27}: merge editperfil: Fast-forward
+fa570bd HEAD@{28}: checkout: moving from editperfil to perfil
+9366595 HEAD@{29}: commit: Edit profile user
+fa570bd HEAD@{30}: merge perfil: Fast-forward
+ea28927 HEAD@{31}: checkout: moving from perfil to editperfil
+fa570bd HEAD@{32}: commit: profile (almost) finished
+ea28927 HEAD@{33}: checkout: moving from master to perfil
+ea28927 HEAD@{34}: merge front: Fast-forward
+ffb6fd8 HEAD@{35}: checkout: moving from front to master
+ea28927 HEAD@{36}: commit: profile almost done
+53bd6ae HEAD@{37}: merge blog: Fast-forward
+ffb6fd8 HEAD@{38}: checkout: moving from blog to front
+53bd6ae HEAD@{39}: commit: real profile
+84dc30f HEAD@{40}: merge session: Fast-forward
+ffb6fd8 HEAD@{41}: checkout: moving from session to blog
+84dc30f HEAD@{42}: commit: profile init
+d458bea HEAD@{43}: merge bd: Fast-forward
+ffb6fd8 HEAD@{44}: checkout: moving from bd to session
+d458bea HEAD@{45}: commit: pfp link extended
+ffb6fd8 HEAD@{46}: checkout: moving from master to bd
+ffb6fd8 HEAD@{47}: commit: yeaaaah
+c670959 HEAD@{48}: commit: diablos Dx
+7448f41 HEAD@{49}: checkout: moving from blog to master
+9c9ae5f HEAD@{50}: commit (merge): muerte a esto
+6ed94fa HEAD@{51}: commit (merge): aaaaaaaa
+6a49024 HEAD@{52}: commit: aaaaaa
+00a71bc HEAD@{53}: checkout: moving from front to blog
+0666618 HEAD@{54}: commit: temportal fix
+4ba3a32 HEAD@{55}: checkout: moving from session to front
+ae10d62 HEAD@{56}: commit: ignore
+76040f5 HEAD@{57}: commit (merge): ignore
+0430c01 HEAD@{58}: checkout: moving from bd to session
+0ee233b HEAD@{59}: commit: pfp links extended
+3995563 HEAD@{60}: checkout: moving from session to bd
+0430c01 HEAD@{61}: commit: profile init
+4ba3a32 HEAD@{62}: checkout: moving from blog to session
+00a71bc HEAD@{63}: checkout: moving from master to blog
+7448f41 HEAD@{64}: checkout: moving from blog to master
+00a71bc HEAD@{65}: checkout: moving from master to blog
+7448f41 HEAD@{66}: merge blog: Merge made by the 'recursive' strategy.
+3995563 HEAD@{67}: checkout: moving from blog to master
+00a71bc HEAD@{68}: commit: cambios en blog
+4ba3a32 HEAD@{69}: checkout: moving from session to blog
+4ba3a32 HEAD@{70}: checkout: moving from front to session
+4ba3a32 HEAD@{71}: checkout: moving from bd to front
+3995563 HEAD@{72}: merge master: Fast-forward
+e03bdf9 HEAD@{73}: checkout: moving from master to bd
+3995563 HEAD@{74}: commit: embraces branches, reject humanity
+4ba3a32 HEAD@{75}: commit: login fixed
+a751b18 HEAD@{76}: commit: delete user feature implemented
+3712f1d HEAD@{77}: commit: index moved to profile & index now is a proper timeline
+e92da66 HEAD@{78}: commit: delete post feature implemented
+4660d60 HEAD@{79}: commit: edit post feature implemented
+511764f HEAD@{80}: commit: some style
+c997d85 HEAD@{81}: commit: blog ok style start
+ecaa294 HEAD@{82}: pull origin master: Fast-forward
+ad17052 HEAD@{83}: commit: main page updated
+2434537 HEAD@{84}: commit: Posting is working
+3dfbf0d HEAD@{85}: pull origin master: Fast-forward
+57ec4a8 HEAD@{86}: commit: username on user table
+a59ddac HEAD@{87}: commit: Posts appear!
+9606c81 HEAD@{88}: commit: root added
+b166c14 HEAD@{89}: commit: ssh
+b60edc2 HEAD@{90}: pull origin master: Fast-forward
+8d5567d HEAD@{91}: pull origin main --allow-unrelated-histories: Merge made by the 'recursive' strategy.
+3799dc8 HEAD@{92}: commit (merge): conflicto solucionado
+7883a49 HEAD@{93}: commit: asd
+6f8edbe HEAD@{94}: checkout: moving from bd to master
+e03bdf9 HEAD@{95}: commit: 123
+6f8edbe HEAD@{96}: checkout: moving from master to bd
+6f8edbe HEAD@{97}: merge bd: Fast-forward (no commit created; -m option ignored)
+35a423f HEAD@{98}: checkout: moving from bd to master
+6f8edbe HEAD@{99}: commit: buaha
+35a423f HEAD@{100}: merge master: Fast-forward
+101be6a HEAD@{101}: checkout: moving from master to bd
+35a423f HEAD@{102}: commit (merge): otrocambio
+df7369b HEAD@{103}: commit: a clearer init_db
+b0cf40d HEAD@{104}: checkout: moving from bd to master
+101be6a HEAD@{105}: checkout: moving from master to bd
+b0cf40d HEAD@{106}: checkout: moving from bd to master
+101be6a HEAD@{107}: commit: Pr
+b0cf40d HEAD@{108}: checkout: moving from master to bd
+b0cf40d HEAD@{109}: commit: login & regex working
+85f85bb HEAD@{110}: commit: base page
+db838a5 HEAD@{111}: commit: Database setted
+095e37a HEAD@{112}: commit: Esqueleto
+09a6408 HEAD@{113}: commit: clean2 Dx
+72d4a9b HEAD@{114}: commit: clean
+2943821 HEAD@{115}: commit: Prueba2
+8acd0d9 HEAD@{116}: commit: Prueba
+53bc43b HEAD@{117}: commit: Prueba
+fdbff26 HEAD@{118}: commit: Prueba
+86b6ad9 HEAD@{119}: commit (initial): Requirements

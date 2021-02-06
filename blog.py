@@ -9,7 +9,7 @@ from blogpage import auth
 from blogpage.auth import login, login_required
 from blogpage.db import get_db
 from blogpage.timeline import (
-    getpost_profile, getpost_all, getpost_one,
+    getcom, getcomm_post, getpag_post, getpost_profile, getpost_all, getpost_one,
     getpag_i, getpag
 )
 
@@ -66,8 +66,8 @@ def profile(usr = None, pag = None):
             return redirect(url_for('auth.login'))
         else:
             usr = g.user['username']
-            pag = 0
-    
+            
+    pag = 0
     limit_d = '1999-01-01 00:00:00'
     limit_t = '2999-01-01 00:00:00'
     way = 'desc'
@@ -85,7 +85,6 @@ def profile(usr = None, pag = None):
             way = 'asc'
     
     posts = getpost_profile(usr, limit_d, limit_t, way)
-
     db, cursor = get_db()
     cursor.execute(
         '''
@@ -99,6 +98,7 @@ def profile(usr = None, pag = None):
 
     if way == 'asc':
         posts.reverse()
+
 
     navi = getpag('profile', user_info['id'], pag)
     return render_template(
@@ -130,10 +130,10 @@ def create():
                 (author, title, content)
             )
             cursor.execute(
-                'update profile set entries = entries + 0.2 where id = %s', (g.user['id'], )
+                'update profile set entries = entries + 0.1 where id = %s', (g.user['id'], )
             )
             cursor.execute(
-                'update metadata set entries = entries + 0.2 where id = 1'
+                'update metadata set entries = entries + 0.1 where id = 1'
             )
             db.commit()
         return redirect(url_for('blog.index'))
@@ -178,10 +178,10 @@ def delete(post_id):
             ''', (post_id, g.user['id'])
         )
         cursor.execute(
-                'update profile set entries = entries - 0.2 where id = %s', (g.user['id'], )
+                'update profile set entries = entries - 0.1 where id = %s', (g.user['id'], )
         )
         cursor.execute(
-                'update metadata set entries = entries - 0.2 where id = 1'
+                'update metadata set entries = entries - 0.1 where id = 1'
         )
         db.commit()
         return redirect(url_for('blog.index'))
@@ -250,5 +250,41 @@ def edituser():
     )
 
 
+@bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
+@bp.route('/post/<int:post_id>/<int:pag>', methods=['GET', 'POST'])
+def view_post(post_id, pag = 0):
+    post = getpost_one(post_id)
+    if post is None:
+        return redirect(url_for('blog.index'))
+    
+    limit_d = '1999-01-01 00:00:00'
+    limit_t = '2999-01-01 00:00:00'
+    way = 'desc'
+    if request.method == 'POST':
+        try:
+            if request.form['limit_d'] is not None:
+                limit_d = request.form['limit_d']
+        except:
+            way = 'desc'
 
+        try:
+            if request.form['limit_t'] is not None:
+                limit_t = request.form['limit_t']
+        except:
+            way = 'asc'
+    
+    comms = getcomm_post(post_id, limit_d, limit_t, way)
+
+    if way == 'asc':
+        comms.reverse()
+    
+    return render_template(
+        'blog/post.html',
+        comms = comms,
+        pst = post,
+        pag = pag,
+        num = len(comms),
+        name = g.user['username'],
+        nav = getpag_post(post_id, pag)
+    )
     

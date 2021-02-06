@@ -3,25 +3,64 @@ from blogpage.db import get_db
 paged_by_set = {
     'global': 'select entries from metadata where id = 1',
     'profile': 'select entries from profile where id = %s',
-    'post': 'select commments from post where id = %s'
+    'post': 'select comments from post where id = %s'
 }
 
 pestructure = {
     'base': 'select p.id, p.title, p.content, p.last_modified, u.username from post p inner join user u ',
     'one': 'where p.created_by = u.username and p.id = %s',
     'of': 'on p.created_by = u.id and u.username = %s and p.last_modified > %s and p.last_modified < %s order by p.last_modified ',
-    'all': 'on p.created_by = u.id and p.last_modified > %s and p.last_modified < %s order by p.last_modified ',
+    'all': 'inner join comment c on p.created_by = u.id and p.last_modified > %s and p.last_modified < %s order by p.last_modified ',
     'desc': 'desc limit 10',
     'asc': 'asc limit 10'
 }
 
 cestructure = {
-    'base': 'select c.id, c.created_at, c.comment_to, c.content, u.username from comment c inner join user u',
-    'one': 'where c.created_by = u.id and u.id = %s',
-    'of': 'where c.created_by = u.id and c.comment_to = %s order by c.created_at limit 1',
-    'all': 'where c.created_by = u.id and c.comment_to = %s and c.created_at > %s and c.created_at < %s order by c.created_at limit 10'  
+    'base': 'select c.created_by, c.created_at, c.commented_to, c.content, u.username',
+    'one': ', p.title from comment c join user u join post p where p.id = c.commented_to and c.id = %s',
+    'of': ', p.title from comment c join user u join post p where u.id = c.created_by, and u.id = %s and p.id = c.commented_to and c.created_by > %s and c.created_by < %s order by c.created_at ',
+    'all': 'from comment c join user u join post p where p.id = c.commented_to and p.id = 4 and c.created_by > %s and c.created_by < %s order by c.created_at '  
 }
-    
+
+
+'''
+query para un post
+
+select c.created_by, c.created_at, c.commented_to, c.content, u.username,
+p.title from comment c join user u join post p where p.id = c.commented_to
+and c.id = 4;
+'''
+
+
+'''
+query para traerme todos los comentarios de un profile
+
+select c.created_by, c.created_at, c.commented_to, c.content, u.username,
+p.title from comment c join user u join post p where u.id = c.created_by,
+and u.id = 1 and p.id = c.commented_to;
+'''    
+
+
+'''
+query para traerme todos los comentarios de un post
+
+select c.created_by, c.created_at, c.commented_to, c.content, 
+u.username from comment c join user u join post p where p.id = 
+c.commented_to and p.id = 4 order by created_by desc limit 10; 
+'''
+
+'''
+limit_d = '1999-01-01 00:00:00'
+limit_t = '2999-01-01 00:00:00'
+'''
+
+'''
+select c.created_by, c.created_at, c.commented_to, c.content, 
+u.username from comment c join user u join post p where 
+p.id = c.commented_to and p.id = 4 and c.created_by > "" and 
+c.created_by < "" order by c.created_at desc limit 10;
+'''
+
 def getpost_one(id):
     db, c = get_db()
     c.execute(
@@ -41,37 +80,57 @@ def getpost_profile(profile_name, limit_d, limit_t, way):
     )
     return c.fetchall()
 
+
 def getpost_all(limit_t, limit_d, way):
     db, c = get_db()
     c.execute(
-        pestructure['base'] + pestructure['all'] + pestructure[way],
-        (limit_d, limit_t)
+        '''
+        select p.id, p.title, p.content, p.last_modified, \
+        u.username from post p inner join user u on \
+        p.created_by = u.id and \
+        p.last_modified > %s and p.last_modified < %s \
+        order by p.last_modified
+        '''+ pestructure[way], (limit_d, limit_t)
     )
     return c.fetchall()
 
 
-
-def getcom(id):
+def getcom_one(id):
     db, c = get_db()
-    c.execute(cestructure['base'] + cestructure['one'], id)
+    c.execute(
+        '''
+        select c.created_by, c.created_at, c.commented_to, \
+        c.content, u.username, p.title from comment c join \
+        user u join post p where p.id = c.commented_to and c.id = %s;
+        ''', (id, )
+    ) 
     return c.fetchone()
 
-def getcom(post_id):
+def getcomm_post(post_id, limit_d, limit_t, way):
     db, c = get_db()
     c.execute(
-        pestructure['base'] + pestructure['of'],
-        post_id
+        '''
+        select c.commented_by, c.commented_at, c.commented_to, \
+        c.comm, u.username from comment c join user u \
+        join post p where p.id = c.commented_to and p.id = %s \
+        and c.commented_at > %s and c.commented_at < %s \
+        order by c.commented_at 
+        ''' + pestructure[way], (post_id, limit_d, limit_t)
     )
     return c.fetchall()
 
-def getcom(post_id, limit_t, limit_d):
+def getcomm_profile(profile_id, limit_d, limit_t, way):
     db, c = get_db()
     c.execute(
-        pestructure['base'] + pestructure['all'],
-        post_id, limit_d, limit_t
+        '''
+        select c.commented_by, c.commented_at, c.commented_to, \
+        c.comm, u.username from comment c join user u \
+        join post p where p.id = c.commented_to and u.id = %s \
+        and c.commented_at > %s and c.commented_at < %s \
+        order by c.commented_at 
+        ''' + pestructure[way], (profile_id, limit_d, limit_t)
     )
     return c.fetchall()
-
 
 
 def getpag_i(fr, pag):
@@ -82,8 +141,11 @@ def getpag_i(fr, pag):
         'next': None,
         'back': None
     }
+    print('-------------------------')
+    print(next['entries'])
+    print('-------------------------')
     if next is not None:
-        if next['entries'] > pag:
+        if next['entries'] > pag + 1:
             navi['next'] = True
         if pag > 0:
             navi['back'] = True
@@ -99,8 +161,32 @@ def getpag(fr, id, pag):
         'next': None,
         'back': None
     }
+    print('-------------------------')
+    print(next['entries'])
+    print('-------------------------')
+
     if next is not None:
-        if next['entries'] > pag:
+        if next['entries'] > pag + 1:
+            navi['next'] = True
+        if pag > 0:
+            navi['back'] = True
+    
+    return navi
+
+def getpag_post(id, pag):
+    db, c = get_db()
+    c.execute (paged_by_set['post'], (id, ))
+    next = c.fetchone()
+    navi = {
+        'next': None,
+        'back': None
+    }
+    print('-------------------------')
+    print(next['comments'])
+    print('-------------------------')
+
+    if next is not None:
+        if next['comments'] > pag + 1:
             navi['next'] = True
         if pag > 0:
             navi['back'] = True

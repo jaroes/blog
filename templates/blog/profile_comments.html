@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Timeline{% endblock %}
+
+{% block ti %}Main Page{% endblock %}
+
+{% block loginzone %}
+    <div class="nav_e">
+        nada
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="navi">
+        <a href="/create">Crear un nuevo post!  </a>
+        <a href="/auth/logout">  Logout  </a>
+        <a href="/auth/login">Cambiar de cuenta</a>
+    </div>
+    <br />
+    {% for comm in comms %}
+    <div class="posts">
+        <div class="posthead">
+            
+            <a class="details" href="/profile/{{ comm.username }}">Autor: {{ comm.username }}</a>
+            <span class="details">{{ comm.commented_at }}</span>
+        </div>
+        <div>{{ comm.comm }}</div>
+        <br />
+    </div>
+    <br />
+    {% endfor %}
+    
+    {% if nav['back'] %}
+        <form method="POST" action="/{{ comm.username }}/comments/{{ pag - 1 }}">
+            <button name="limit_d" id="limit_d" value="{{ comms[0].commented_at }}">
+                Atras
+            </button>
+        </form>
+    {% endif %}
+    {% if nav['next'] %}
+    <form method="POST" action="/{{ comm.username }}/comments/{{ pag + 1 }}">
+            <button name="limit_t" id="limit_t" value="{{ comms[num - 1].commented_at }}">
+                Adelante
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}

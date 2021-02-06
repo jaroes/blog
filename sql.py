@@ -46,12 +46,12 @@ constl = [
         """
             CREATE TABLE comment (
                 id INT PRIMARY KEY AUTO_INCREMENT,
-                created_by INT NOT NULL,
-                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                commented_to INT UNIQUE NOT NULL,
-                content TEXT NOT NULL,
-                FOREIGN KEY (created_by) REFERENCES profile (id),
+                commented_by INT NOT NULL,
+                commented_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                commented_to INT NOT NULL,
+                comm TEXT NOT NULL,
+                FOREIGN KEY (commented_by) REFERENCES profile (id),
                 FOREIGN KEY (commented_to) REFERENCES post (id)
             );
-        """,
+        """
 ]

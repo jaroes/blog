@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Timeline{% endblock %}
+
+{% block ti %}Main Page{% endblock %}
+
+{% block loginzone %}
+    <div class="nav_e">
+        nada
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="navi">
+        <a href="/create">Crear un nuevo post!  </a>
+        <a href="/auth/logout">  Logout  </a>
+        <a href="/auth/login">Cambiar de cuenta</a>
+    </div>
+    <br />
+    <div class="posts">
+        <div class="posthead">
+            <div class='title'>
+                <strong>{{ pst.title }}</strong>
+            </div>
+            <a class="details" href="profile/{{ pst.username }}">Autor: {{ pst.username }}</a>
+            <span class="details">{{ pst.last_modified }}</span>
+            <span class="details">{{ pst.id }}</span>
+            <span><a href="/edit/{{ pst.id }}">Editar</a></span>
+            <span><a href="/delete/{{ pst.id }}">Borrar</a></span>
+        </div>
+        <div>{{ pst.content }}</div>
+        <br />
+    </div>
+    <br />
+    {% for comm in comms %}
+    <div class="posts">
+        <div class="posthead">
+            
+            <a class="details" href="/profile/{{ comm.username }}">Autor: {{ comm.username }}</a>
+            <span class="details">{{ comm.commented_at }}</span>
+        </div>
+        <div>{{ comm.comm }}</div>
+        <br />
+    </div>
+    <br />
+    {% endfor %}
+    
+    {% if nav['back'] %}
+        <form method="POST" action="/post/{{ pst.id }}/{{ pag - 1 }}">
+            <button name="limit_d" id="limit_d" value="{{ comms[0].commented_at }}">
+                Atras
+            </button>
+        </form>
+    {% endif %}
+    {% if nav['next'] %}
+        <form method="POST" action="/post/{{ pst.id }}/{{ pag + 1 }}">
+            <button name="limit_t" id="limit_t" value="{{ comms[num - 1].commented_at }}">
+                Adelante
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}
