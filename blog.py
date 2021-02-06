@@ -284,7 +284,7 @@ def view_post(post_id, pag = 0):
         except:
             way = 'asc'
     
-    comms = getcomm_post(post_id, limit_d, limit_t, way)
+    comms = getcomm_post(g.user['id'] ,post_id, limit_d, limit_t, way)
 
     if way == 'asc':
         comms.reverse()
@@ -319,7 +319,7 @@ def user_comms(user, pag = 0):
         except:
             way = 'asc'
     
-    comms = getcomm_user(user, limit_d, limit_t, way)
+    comms = getcomm_user(g.user['id'], user, limit_d, limit_t, way)
 
     if way == 'asc':
         comms.reverse()

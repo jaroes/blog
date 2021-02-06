@@ -96,54 +96,59 @@ def getpost_all(limit_t, limit_d, way):
     return c.fetchall()
 
 
-def getcom_one(id):
+def getcom_one(current_user ,id):
     db, c = get_db()
     c.execute(
         '''
-        select c.created_by, c.created_at, c.commented_to, \
-        c.content, u.username, p.title from comment c join \
+        select c.commented_by, c.commented_at, c.commented_to, \
+        c.comm, u.username, p.title, if(commented_by = %s, True, Null) \
+        as comment_ownerfrom comment c join \
         user u join post p where p.id = c.commented_to and c.id = %s;
-        ''', (id, )
+        ''', (current_user, id)
     ) 
     return c.fetchone()
 
-def getcomm_post(post_id, limit_d, limit_t, way):
+def getcomm_post(current_user, post_id, limit_d, limit_t, way):
     db, c = get_db()
     c.execute(
         '''
         select c.commented_by, c.commented_at, c.commented_to, \
-        c.comm, u.username from comment c join user u \
+        c.comm, u.username, if(commented_by = %s, True, Null) as \
+        comment_owner from comment c join user u \
         join post p where p.id = c.commented_to and p.id = %s \
+        and c.commented_by = u.id \
         and c.commented_at > %s and c.commented_at < %s \
         order by c.commented_at 
-        ''' + pestructure[way], (post_id, limit_d, limit_t)
+        ''' + pestructure[way], (current_user, post_id, limit_d, limit_t)
     )
     return c.fetchall()
 
-def getcomm_profile(profile_id, limit_d, limit_t, way):
+def getcomm_profile(current_user, profile_id, limit_d, limit_t, way):
     db, c = get_db()
+    print(current_user)
     c.execute(
         '''
         select c.commented_by, c.commented_at, c.commented_to, \
-        c.comm, u.username from comment c join user u \
+        c.comm, u.username, if(commented_by = %s, True, Null) as comment_owner from comment c join user u \
         join post p where p.id = c.commented_to and u.id = %s \
         and c.commented_at > %s and c.commented_at < %s \
         order by c.commented_at 
-        ''' + pestructure[way], (profile_id, limit_d, limit_t)
+        ''' + pestructure[way], (current_user, profile_id, limit_d, limit_t)
     )
     return c.fetchall()
 
 
-def getcomm_user(user_name, limit_d, limit_t, way):
+def getcomm_user(current_user, user_name, limit_d, limit_t, way):
     db, c = get_db()
     c.execute(
         '''
         select c.commented_by, c.commented_at, c.commented_to, \
-        c.comm, u.username, p.title from comment c join user u \
+        c.comm, u.username, p.title, if(commented_by = %s, True, Null) \
+        as comment_owner from comment c join user u \
         join post p where c.commented_by = u.id and u.username = %s \
         and p.id = commented_to and c.commented_at > %s and \
         c.commented_at < %s order by c.commented_at 
-        ''' + pestructure[way], (user_name, limit_d, limit_t)
+        ''' + pestructure[way], (current_user, user_name, limit_d, limit_t)
     )
     return c.fetchall()
 

@@ -40,6 +40,12 @@
             <a class="details" href="/profile/{{ comm.username }}">Autor: {{ comm.username }}</a>
             <span class="details">{{ comm.commented_at }}</span>
         </div>
+        <div>
+            {% if comm.comment_owner %}
+                <a href="edit/comment/{{ comm.id }}">Editar</a>
+                <a href="delete/comment/{{ comm.id }}">Borrar</a>
+            {% endif %}
+        </div>
         <div>{{ comm.comm }}</div>
         <br />
     </div>
