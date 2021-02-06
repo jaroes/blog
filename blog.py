@@ -48,7 +48,7 @@ def index(pag = 0):
         except:
             way = 'asc'
 
-    posts = getpost_all(limit_t, limit_d, way)
+    posts = getpost_all(g.user['id'], limit_t, limit_d, way)
 
     if way == 'asc':
         posts.reverse()
@@ -95,7 +95,7 @@ def profile(usr = None, pag = None):
         except:
             way = 'asc'
     
-    posts = getpost_profile(usr, limit_d, limit_t, way)
+    posts = getpost_profile(g.user['id'], usr, limit_d, limit_t, way)
     db, cursor = get_db()
     cursor.execute(
         '''
@@ -264,7 +264,7 @@ def edituser():
 @bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
 @bp.route('/post/<int:post_id>/<int:pag>', methods=['GET', 'POST'])
 def view_post(post_id, pag = 0):
-    post = getpost_one(post_id)
+    post = getpost_one(g.user['id'],post_id)
     if post is None:
         return redirect(url_for('blog.index'))
     

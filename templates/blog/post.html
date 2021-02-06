@@ -25,8 +25,10 @@
             <a class="details" href="profile/{{ pst.username }}">Autor: {{ pst.username }}</a>
             <span class="details">{{ pst.last_modified }}</span>
             <span class="details">{{ pst.id }}</span>
-            <span><a href="/edit/{{ pst.id }}">Editar</a></span>
-            <span><a href="/delete/{{ pst.id }}">Borrar</a></span>
+            {% if pst.post_owner %}
+                <span><a href="/edit/{{ pst.id }}">Editar</a></span>
+                <span><a href="/delete/{{ pst.id }}">Borrar</a></span>
+            {% endif %}
         </div>
         <div>{{ pst.content }}</div>
         <br />

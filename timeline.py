@@ -8,7 +8,7 @@ paged_by_set = {
 }
 
 pestructure = {
-    'base': 'select p.id, p.title, p.content, p.last_modified, u.username from post p inner join user u ',
+    'base': 'select p.id, p.title, p.content, p.last_modified, u.username, if(p.created_by = %s, True, Null) as post_owner from post p inner join user u ',
     'one': 'where p.created_by = u.username and p.id = %s',
     'of': 'on p.created_by = u.id and u.username = %s and p.last_modified > %s and p.last_modified < %s order by p.last_modified ',
     'all': 'inner join comment c on p.created_by = u.id and p.last_modified > %s and p.last_modified < %s order by p.last_modified ',
@@ -62,36 +62,38 @@ p.id = c.commented_to and p.id = 4 and c.created_by > "" and
 c.created_by < "" order by c.created_at desc limit 10;
 '''
 
-def getpost_one(id):
+def getpost_one(current_user, id):
     db, c = get_db()
     c.execute(
         '''
         select p.id, p.title, p.content, p.last_modified, \
-        u.username from post p inner join user u \
+        u.username, if(p.created_by = %s, True, Null) as \
+        post_owner from post p inner join user u \
         where p.created_by = u.id and p.id = %s
-        ''', (id, )
+        ''', (current_user, id)
     )
     return c.fetchone()
 
-def getpost_profile(profile_name, limit_d, limit_t, way):
+def getpost_profile(current_user, profile_name, limit_d, limit_t, way):
     db, c = get_db()
     c.execute(
         pestructure['base'] + pestructure['of'] + pestructure[way],
-        (profile_name, limit_d, limit_t)
+        (current_user, profile_name, limit_d, limit_t)
     )
     return c.fetchall()
 
 
-def getpost_all(limit_t, limit_d, way):
+def getpost_all(current_user ,limit_t, limit_d, way):
     db, c = get_db()
     c.execute(
         '''
         select p.id, p.title, p.content, p.last_modified, \
-        u.username from post p inner join user u on \
+        u.username, if(p.created_by = %s, True, Null) as \
+        post_owner from post p inner join user u on \
         p.created_by = u.id and \
         p.last_modified > %s and p.last_modified < %s \
         order by p.last_modified
-        '''+ pestructure[way], (limit_d, limit_t)
+        '''+ pestructure[way], (current_user, limit_d, limit_t)
     )
     return c.fetchall()
 

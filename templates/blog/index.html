@@ -28,8 +28,10 @@
             <a class="details" href="profile/{{ post.username }}">Autor: {{ post.username }}</a>
             <span class="details">{{ post.last_modified }}</span>
             <span class="details">{{ post.id }}</span>
-            <span><a href="/edit/{{ post.id }}">Editar</a></span>
-            <span><a href="/delete/{{ post.id }}">Borrar</a></span>
+            {% if post.post_owner %}
+                <span><a href="/edit/{{ post.id }}">Editar</a></span>
+                <span><a href="/delete/{{ post.id }}">Borrar</a></span>
+            {% endif %}
         </div>
         <div>{{ post.content }}</div>
         <br />
