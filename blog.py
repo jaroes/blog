@@ -3,14 +3,25 @@ from flask import (
     render_template, request,
     url_for
 )
+from mysql.connector import connect
 
 from werkzeug.exceptions import abort
 from blogpage import auth
 from blogpage.auth import login, login_required
 from blogpage.db import get_db
 from blogpage.timeline import (
-    getcom, getcomm_post, getpag_post, getpost_profile, getpost_all, getpost_one,
-    getpag_i, getpag
+    getpost_one,
+    getpost_profile,
+    getcomm_profile,
+    getpost_all,
+    getcom_one,
+    getcomm_post,
+    getcomm_profile,
+    getcomm_user,
+    getpag_i,
+    getpag,
+    getpag_profile,
+    getpag_post
 )
 
 from datetime import datetime
@@ -286,5 +297,87 @@ def view_post(post_id, pag = 0):
         num = len(comms),
         name = g.user['username'],
         nav = getpag_post(post_id, pag)
+    )
+
+
+@bp.route('/profile/<user>/comments', methods=['GET', 'POST'])
+@bp.route('/profile/<user>/comments/<int:pag>', methods=['GET', 'POST'])
+def user_comms(user, pag = 0):  
+    limit_d = '1999-01-01 00:00:00'
+    limit_t = '2999-01-01 00:00:00'
+    way = 'desc'
+    if request.method == 'POST':
+        try:
+            if request.form['limit_d'] is not None:
+                limit_d = request.form['limit_d']
+        except:
+            way = 'desc'
+
+        try:
+            if request.form['limit_t'] is not None:
+                limit_t = request.form['limit_t']
+        except:
+            way = 'asc'
+    
+    comms = getcomm_user(user, limit_d, limit_t, way)
+
+    if way == 'asc':
+        comms.reverse()
+    
+    db, cursor = get_db()
+    cursor.execute(
+        '''
+        select p.id, p.birthday, p.bio, \
+        p.direction, p.pfp, p.anniversary, p.entries, \
+        u.username from profile p join user u where \
+        p.id = u.id and u.username = %s
+        ''', (user, )
+    )
+    user_info = cursor.fetchone()
+
+    return render_template(
+        'blog/profile_comments.html',
+        comms = comms,
+        pst = comms,
+        pag = pag,
+        num = len(comms),
+        name = g.user['username'],
+        nav = getpag_profile(user, pag),
+        pf=user_info
+    )
+
+
+@bp.route('/comment/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def comment(post_id):  
+    post = getpost_one(post_id)
+    if request.method == 'POST':
+        content = request.form['comment']
+        commented_to = post_id
+        commented_by = g.user['id']
+        db, c = get_db()
+        c.execute(
+            '''
+            insert into comment (comm, commented_to, commented_by) \
+            values (%s, %s, %s)
+            ''', (content, commented_to, commented_by)
+        )
+        c.execute (
+            '''
+            update profile set comments = comments + 0.1 where id = %s
+            ''', (g.user['id'], )
+        )
+        c.execute (
+            '''
+            update post set comments = comments + 0.1 where id = %s
+            ''', (post_id, )
+        )
+        db.commit()
+        return redirect(url_for('blog.view_post', post_id=post_id))
+
+    return render_template(
+        'blog/comment.html',
+        pst = post,
+        name = g.user['username']
     )
     

@@ -3,7 +3,8 @@ from blogpage.db import get_db
 paged_by_set = {
     'global': 'select entries from metadata where id = 1',
     'profile': 'select entries from profile where id = %s',
-    'post': 'select comments from post where id = %s'
+    'post': 'select comments from post where id = %s',
+    'pf': 'select p.comments from profile p join user u where u.username = %s'
 }
 
 pestructure = {
@@ -133,6 +134,20 @@ def getcomm_profile(profile_id, limit_d, limit_t, way):
     return c.fetchall()
 
 
+def getcomm_user(user_name, limit_d, limit_t, way):
+    db, c = get_db()
+    c.execute(
+        '''
+        select c.commented_by, c.commented_at, c.commented_to, \
+        c.comm, u.username, p.title from comment c join user u \
+        join post p where c.commented_by = u.id and u.username = %s \
+        and p.id = commented_to and c.commented_at > %s and \
+        c.commented_at < %s order by c.commented_at 
+        ''' + pestructure[way], (user_name, limit_d, limit_t)
+    )
+    return c.fetchall()
+
+
 def getpag_i(fr, pag):
     db, c = get_db()
     c.execute (paged_by_set[fr])
@@ -173,9 +188,31 @@ def getpag(fr, id, pag):
     
     return navi
 
-def getpag_post(id, pag):
+def getpag_post(post_id, pag):
     db, c = get_db()
-    c.execute (paged_by_set['post'], (id, ))
+    c.execute (paged_by_set['post'], (post_id, ))
+    next = c.fetchone()
+    navi = {
+        'next': None,
+        'back': None
+    }
+    print('-------------------------')
+    print(next['comments'])
+    print('-------------------------')
+
+    if next is not None:
+        if next['comments'] > pag + 1:
+            navi['next'] = True
+        if pag > 0:
+            navi['back'] = True
+    
+    return navi
+
+
+
+def getpag_profile(post_id, pag):
+    db, c = get_db()
+    c.execute (paged_by_set['pf'], (post_id, ))
     next = c.fetchone()
     navi = {
         'next': None,

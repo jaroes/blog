@@ -29,6 +29,7 @@ constl = [
                 direction VARCHAR(50),
                 pfp VARCHAR(80),
                 entries FLOAT(9) NOT NULL DEFAULT 0,
+                comments FLOAT(9) NOT NULL DEFAULT 0,
                 anniversary TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             );
         """,

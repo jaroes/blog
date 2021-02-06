@@ -17,8 +17,43 @@
         <a href="/auth/login">Cambiar de cuenta</a>
     </div>
     <br />
+    
+    <div>
+        <a href="/profile/{{ name }}/0">
+            Posts
+        </a>
+        <a href="/profile/{{ name }}/comments/0">
+            Comments
+        </a>
+    </div>
+    <div class="pf">
+        <div>
+            {% if edition %}
+            <a href="/editprofile">✏️</a>
+            {% endif %}
+            <span>{{ pf['username'] }}</span>
+        </div>
+        <div>
+            <img src="{{ pf['pfp'] }}" />
+        </div>
+        {% if pf['bio'] %}
+            <div>{{ pf['bio'] }}</div>
+        {% endif %}
+         {% if pf['direction'] %}
+            <div>🌎{{ pf['direction'] }}</div>
+        {% endif %}
+        {% if pf['birthday'] %}
+            <div>🥧{{ pf['birthday'] }}</div>
+        {% endif %}
+        <div>Usuario desde</div>
+        <div>{{ pf['anniversary'] }}</div>
+    </div>
+    
     {% for comm in comms %}
     <div class="posts">
+        <div>
+            {{ comm.title }}
+        </div>
         <div class="posthead">
             
             <a class="details" href="/profile/{{ comm.username }}">Autor: {{ comm.username }}</a>
@@ -31,14 +66,14 @@
     {% endfor %}
     
     {% if nav['back'] %}
-        <form method="POST" action="/{{ comm.username }}/comments/{{ pag - 1 }}">
+        <form method="POST" action="/profile/{{ comms[0].username }}/comments/{{ pag - 1 }}">
             <button name="limit_d" id="limit_d" value="{{ comms[0].commented_at }}">
                 Atras
             </button>
         </form>
     {% endif %}
     {% if nav['next'] %}
-    <form method="POST" action="/{{ comm.username }}/comments/{{ pag + 1 }}">
+    <form method="POST" action="/profile/{{ comms[0].username }}/comments/{{ pag + 1 }}">
             <button name="limit_t" id="limit_t" value="{{ comms[num - 1].commented_at }}">
                 Adelante
             </button>
