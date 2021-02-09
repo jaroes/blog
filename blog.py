@@ -3,6 +3,7 @@ from flask import (
     render_template, request,
     url_for
 )
+from flask.globals import current_app
 from mysql.connector import connect
 
 from werkzeug.exceptions import abort
@@ -10,18 +11,12 @@ from blogpage import auth
 from blogpage.auth import login, login_required
 from blogpage.db import get_db
 from blogpage.timeline import (
-    getpost_one,
-    getpost_profile,
-    getcomm_profile,
-    getpost_all,
-    getcom_one,
-    getcomm_post,
-    getcomm_profile,
-    getcomm_user,
     getpag_i,
     getpag,
     getpag_profile,
-    getpag_post
+    getpag_post, 
+    getseveral, 
+    getone
 )
 
 from datetime import datetime
@@ -48,7 +43,15 @@ def index(pag = 0):
         except:
             way = 'asc'
 
-    posts = getpost_all(g.user['id'], limit_t, limit_d, way)
+    #posts = getpost_all(g.user['id'], limit_t, limit_d, way)
+    posts = getseveral(
+        tipo='p',
+        which='main',
+        current_user=g.user['id'],
+        limit_d=limit_d,
+        limit_t=limit_t,
+        way=way
+    )
 
     if way == 'asc':
         posts.reverse()
@@ -95,7 +98,16 @@ def profile(usr = None, pag = None):
         except:
             way = 'asc'
     
-    posts = getpost_profile(g.user['id'], usr, limit_d, limit_t, way)
+    #posts = getpost_profile(g.user['id'], usr, limit_d, limit_t, way)
+    posts = getseveral(
+        tipo='p',
+        which='profile',
+        current_user=g.user['id'],
+        limit_d=limit_d,
+        limit_t=limit_t,
+        way=way,
+        id=usr
+    )
     db, cursor = get_db()
     cursor.execute(
         '''
@@ -168,7 +180,8 @@ def edit(post_id):
         db.commit()
         return redirect(url_for('blog.index'))
     
-    pst = getpost_one(post_id)
+    #pst = getpost_one(post_id)
+    pst = getone('p', g.user['id'], post_id)
     if pst is None or pst['username'] != g.user['username']:
         flash('No puedes editar post que no sea tuyos!!')
         return redirect(url_for('blog.index'))
@@ -197,7 +210,7 @@ def delete(post_id):
         db.commit()
         return redirect(url_for('blog.index'))
     
-    posts = getpost_one(post_id)
+    posts = getone('p', g.user['id'], post_id)
     if posts is None or posts['username'] != g.user['username']:
         flash('No puedes borrar post que no sea tuyos!!')
         return redirect(url_for('blog.index'))
@@ -264,7 +277,12 @@ def edituser():
 @bp.route('/post/<int:post_id>', methods=['GET', 'POST'])
 @bp.route('/post/<int:post_id>/<int:pag>', methods=['GET', 'POST'])
 def view_post(post_id, pag = 0):
-    post = getpost_one(g.user['id'],post_id)
+    #post = getpost_one(g.user['id'],post_id)
+    post = getone(
+        tipo='p',
+        current_id=g.user['id'],
+        id=post_id
+    )
     if post is None:
         return redirect(url_for('blog.index'))
     
@@ -284,12 +302,18 @@ def view_post(post_id, pag = 0):
         except:
             way = 'asc'
     
-    comms = getcomm_post(g.user['id'], post_id, limit_d, limit_t, way)
-
+    #comms = getcomm_post(g.user['id'], post_id, limit_d, limit_t, way)
+    comms = getseveral(
+        tipo='c',
+        which='post',
+        current_user=g.user['id'],
+        limit_d=limit_d,
+        limit_t=limit_t,
+        way=way,
+        id=post_id
+    )
     if way == 'asc':
         comms.reverse()
-
-    print (comms[0]['id'])
 
     return render_template(
         'blog/post.html',
@@ -321,7 +345,16 @@ def user_comms(user, pag = 0):
         except:
             way = 'asc'
     
-    comms = getcomm_user(g.user['id'], user, limit_d, limit_t, way)
+    #comms = getcomm_user(g.user['id'], user, limit_d, limit_t, way)
+    comms = getseveral(
+        tipo='c',
+        which='user',
+        current_user=g.user['id'],
+        limit_d=limit_d,
+        limit_t=limit_t,
+        way=way,
+        id=user
+    )
 
     if way == 'asc':
         comms.reverse()
@@ -352,7 +385,12 @@ def user_comms(user, pag = 0):
 @bp.route('/comment/<int:post_id>', methods=['GET', 'POST'])
 @login_required
 def comment(post_id):  
-    post = getpost_one(post_id)
+    #post = getpost_one(g.user['id'], post_id)
+    post = getone(
+        tipo='p',
+        current_id=g.user['id'],
+        id=post_id
+    )
     if request.method == 'POST':
         content = request.form['comment']
         commented_to = post_id
@@ -387,7 +425,8 @@ def comment(post_id):
 @bp.route('/edit/comment/<int:comm_id>', methods=['GET', 'POST'])
 @login_required
 def editcomments(comm_id):
-    comm = getcom_one(g.user['id'], comm_id)
+    #comm = getcom_one(g.user['id'], comm_id)
+    comm = getone('c', g.user['id'], comm_id)
     if comm['comment_owner'] is None:
         flash('No puedes editar los comentarios de la peña')
         return redirect(url_for('blog.view_post', post_id=comm['commented_to']))
@@ -407,7 +446,8 @@ def editcomments(comm_id):
 @bp.route('/delete/comment/<int:comm_id>', methods=['GET', 'POST'])
 @login_required
 def deletecomments(comm_id):
-    comm = getcom_one(g.user['id'], comm_id)
+    #comm = getcom_one(g.user['id'], comm_id)
+    comm = getone('c', g.user['id'], comm_id)
     if comm['comment_owner'] is None:
         flash('No puedes borrar los comentarios de la peña')
         return redirect(url_for('blog.view_post', post_id=comm['commented_to']))
