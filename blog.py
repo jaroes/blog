@@ -16,7 +16,7 @@ from blogpage.timeline import (
     getpag_profile,
     getpag_post, 
     getseveral, 
-    getone
+    getone, needs_pag
 )
 
 from datetime import datetime
@@ -62,7 +62,7 @@ def index(pag = 0):
         'blog/index.html', 
         posts=posts, 
         name=g.user['username'],
-        navi=getpag_i('global', pag),
+        navi=needs_pag('global', pag),
         pag=pag,
         num=len(posts)
     )
@@ -123,7 +123,8 @@ def profile(usr = None, pag = None):
         posts.reverse()
 
 
-    navi = getpag('profile', user_info['id'], pag)
+    #navi = getpag('profile', user_info['id'], pag)
+    navi = needs_pag('profile_posts', pag, usr)
     return render_template(
         'blog/profile.html',
         posts=posts,
@@ -322,7 +323,8 @@ def view_post(post_id, pag = 0):
         pag = pag,
         num = len(comms),
         name = g.user['username'],
-        nav = getpag_post(post_id, pag)
+        #nav = getpag_post(post_id, pag)
+        nav=needs_pag('post', pag, post_id)
     )
 
 
@@ -377,8 +379,9 @@ def user_comms(user, pag = 0):
         pag = pag,
         num = len(comms),
         name = g.user['username'],
-        nav = getpag_profile(user, pag),
-        pf=user_info
+        #nav = getpag_profile(user, pag),
+        nav = needs_pag('profile_comments', pag, user),
+        pf = user_info
     )
 
 

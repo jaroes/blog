@@ -2,9 +2,9 @@ from blogpage.db import get_db
 
 paged_by_set = {
     'global': 'select entries from metadata where id = 1',
-    'profile': 'select entries from profile where id = %s',
+    'profile_posts': 'select p.entries from profile p join user u on p.id = u.id and u.username = %s',
     'post': 'select comments from post where id = %s',
-    'pf': 'select p.comments from profile p join user u where u.username = %s'
+    'profile_comments': 'select p.comments from profile p join user u on p.id = u.id and u.username = %s'
 }
 
 po = dict(
@@ -85,81 +85,25 @@ def getseveral(tipo, which, current_user, limit_d, limit_t, way, id=None):
     
     return c.fetchall()
 
-
-def getpag_i(fr, pag):
+def needs_pag(pages_for, pag, id=None):
     db, c = get_db()
-    c.execute (paged_by_set[fr])
-    next = c.fetchone()
-    navi = {
-        'next': None,
-        'back': None
-    }
-    print('-------------------------')
-    print(next['entries'])
-    print('-------------------------')
-    if next is not None:
-        if next['entries'] > pag + 1:
-            navi['next'] = True
-        if pag > 0:
-            navi['back'] = True
     
-    return navi
-
-
-def getpag(fr, id, pag):
-    db, c = get_db()
-    c.execute (paged_by_set[fr], (id, ))
+    if id is None:
+        c.execute (paged_by_set[pages_for])
+    else:
+        c.execute (paged_by_set[pages_for], (id, ))
     next = c.fetchone()
-    navi = {
-        'next': None,
-        'back': None
-    }
-    print('-------------------------')
-    print(next['entries'])
-    print('-------------------------')
-
-    if next is not None:
-        if next['entries'] > pag + 1:
-            navi['next'] = True
-        if pag > 0:
-            navi['back'] = True
     
-    return navi
-
-def getpag_post(post_id, pag):
-    db, c = get_db()
-    c.execute (paged_by_set['post'], (post_id, ))
-    next = c.fetchone()
     navi = {
         'next': None,
         'back': None
     }
-    print('-------------------------')
-    print(next['comments'])
-    print('-------------------------')
-
-    if next is not None:
-        if next['comments'] > pag + 1:
-            navi['next'] = True
-        if pag > 0:
-            navi['back'] = True
     
-    return navi
-
-def getpag_profile(post_id, pag):
-    db, c = get_db()
-    c.execute (paged_by_set['pf'], (post_id, ))
-    next = c.fetchone()
-    navi = {
-        'next': None,
-        'back': None
-    }
-    print('-------------------------')
-    print(next['comments'])
-    print('-------------------------')
-
+    consult_for = 'entries'
+    if pages_for == 'profile_comments' or pages_for == 'post':
+        consult_for = 'comments'
     if next is not None:
-        if next['comments'] > pag + 1:
+        if next[consult_for] > pag + 1:
             navi['next'] = True
         if pag > 0:
             navi['back'] = True
