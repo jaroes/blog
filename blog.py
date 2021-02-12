@@ -10,14 +10,7 @@ from werkzeug.exceptions import abort
 from blogpage import auth
 from blogpage.auth import login, login_required
 from blogpage.db import get_db
-from blogpage.timeline import (
-    getpag_i,
-    getpag,
-    getpag_profile,
-    getpag_post, 
-    getseveral, 
-    getone, needs_pag
-)
+from blogpage.timeline import getseveral, getone, needs_pag, new_getseveral, new_getseveral
 
 from datetime import datetime
 
@@ -44,6 +37,7 @@ def index(pag = 0):
             way = 'asc'
 
     #posts = getpost_all(g.user['id'], limit_t, limit_d, way)
+    '''
     posts = getseveral(
         tipo='p',
         which='main',
@@ -52,9 +46,18 @@ def index(pag = 0):
         limit_t=limit_t,
         way=way
     )
+    '''
+    posts = new_getseveral(
+        tipo='np',
+        which='main',
+        current_user=g.user['id'],
+        page=pag
+    )
 
+    '''
     if way == 'asc':
         posts.reverse()
+    '''
 
     print('hasta aqui sin problemas')
 

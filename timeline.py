@@ -1,3 +1,5 @@
+from os import DirEntry
+from flask.globals import current_app
 from blogpage.db import get_db
 
 paged_by_set = {
@@ -22,6 +24,26 @@ po = dict(
         on p.created_by = u.id and u.username = %s and \
         p.last_modified > %s and p.last_modified < %s \
         order by p.last_modified
+        ''',
+    one='''
+        where p.created_by = u.id and p.id = %s
+        '''
+)
+
+
+new_po = dict(
+    base='''
+        select p.id, p.title, p.content, p.last_modified, \
+        u.username, if(p.created_by = %s, True, Null) \
+        as post_owner from post p inner join user u 
+        ''',
+    main='''
+        on p.created_by = u.id order by \
+        p.last_modified desc limit %s, %s
+        ''',
+    profile='''
+        on p.created_by = u.id and u.username = %s \
+        order by p.last_modified desc limit %s, %s
         ''',
     one='''
         where p.created_by = u.id and p.id = %s
@@ -61,9 +83,31 @@ co = dict(
 data = dict(
     p=po,
     c=co,
+    np=new_po,
     desc='desc limit 10',
     asc='asc limit 10'
 )
+
+
+
+
+
+def new_getseveral(tipo, which, current_user, page, per_page=10, id=None):
+    db, c = get_db()
+    to_fetch = 'base'
+    if which == 'post' and tipo == 'comment':
+        to_fetch = 'unique'
+
+    sql = data[tipo][to_fetch] + data[tipo][which]
+    if id is None:
+        c.execute( sql,(current_user, page, per_page) )
+    else:
+        c.execute( sql,(current_user, id, page, per_page) )
+    return c.fetchall()
+
+
+
+
 
 def getone(tipo, current_id, id):
     db, c = get_db()
@@ -109,3 +153,64 @@ def needs_pag(pages_for, pag, id=None):
             navi['back'] = True
     
     return navi
+
+'''
+class get_from_db:
+    def __init__(self):
+        self.data = dict(
+            post = po,
+            comments = co,
+            desc='desc limit 10',
+            asc='asc limit 10'
+        )
+    
+    def getone(self, tipo, current_id, id):
+        db, c = get_db()
+        sql = self.data[tipo]['base'] + self.data[tipo]['one']
+        c.execute(sql, (current_id, id))
+        return c.fetchone()
+
+    def getseveral(self, tipo, which, current_user, limit_d, limit_t, way, id=None):
+        db, c = get_db()
+        to_fetch = 'base'
+        if which == 'post' and tipo == 'comment':
+            to_fetch = 'unique'
+
+        sql = self.data[tipo][to_fetch] + self.data[tipo][which] + self.data[way]
+        if id is None:
+            c.execute(sql, (current_user, limit_d, limit_t))
+        else:
+            c.execute(sql, (current_user, id, limit_d, limit_t))
+        
+        return c.fetchall()
+
+
+
+
+class Posts:
+    def __init__(self, current_user, for_what, id=None):
+        self.context=for_what
+        self.current_user=current_user
+        if id is not None:
+            self.entries=self.get_entries(id)
+        
+
+    def get_entries(id):
+        db, c = get_db()
+        for_what = 'profile_post'
+        if id is None:
+            for_what = 'global'
+            c.cursor(paged_by_set[for_what])
+        else:
+            c.cursor(paged_by_set[for_what])
+        entradas = c.fetchone()
+        return entradas[for_what]
+
+    def getone(self, id):
+        return get_from_db.getone('p', self.current_user, id)
+
+    def getseveral(self, limit_d, limit_t, way, page):
+
+
+'''
+        
