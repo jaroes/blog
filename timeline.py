@@ -154,7 +154,7 @@ def needs_pag(pages_for, pag, id=None):
     
     return navi
 
-'''
+
 class get_from_db:
     def __init__(self):
         self.data = dict(
@@ -188,29 +188,49 @@ class get_from_db:
 
 
 class Posts:
-    def __init__(self, current_user, for_what, id=None):
+    def __init__(self, current_user, for_what, pilin=None):
         self.context=for_what
         self.current_user=current_user
-        if id is not None:
-            self.entries=self.get_entries(id)
+        self.relatives = dict(
+            next=None,
+            back=None
+        )
+        if pilin is None:
+            print('voy yo')
+            self.entries=self.get_entries()
+        else:
+            self.entries=self.get_entries(pilin)
         
 
-    def get_entries(id):
+    def get_entries(self, rios=0):
         db, c = get_db()
-        for_what = 'profile_post'
-        if id is None:
-            for_what = 'global'
-            c.cursor(paged_by_set[for_what])
+        print('--------\n{}\n-------------'.format(type(rios)))
+        if rios == 0:
+            print('voy yo 2')
+            c.execute(paged_by_set['global'])
         else:
-            c.cursor(paged_by_set[for_what])
+            print('no sé wn')
+            c.execute(paged_by_set['profile_post'], (rios, ))
         entradas = c.fetchone()
-        return entradas[for_what]
+        print(entradas)
+        return entradas['entries']
 
     def getone(self, id):
         return get_from_db.getone('p', self.current_user, id)
 
-    def getseveral(self, limit_d, limit_t, way, page):
-
-
-'''
+    def getseveralin(self, page, paged_by=10):
+        outt = new_getseveral(
+            'np', 
+            self.context, 
+            self.current_user, 
+            page*10, 
+            paged_by
+        )
+        print('pagina: {}'.format(page))
+        print('paginass: {}'.format(self.entries))
         
+        if page > 0:
+            self.relatives['back'] = True
+        if (page+1) * paged_by < (self.entries*10):
+            self.relatives['next'] = True
+        return outt, self.relatives

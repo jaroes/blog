@@ -10,7 +10,7 @@ from werkzeug.exceptions import abort
 from blogpage import auth
 from blogpage.auth import login, login_required
 from blogpage.db import get_db
-from blogpage.timeline import getseveral, getone, needs_pag, new_getseveral, new_getseveral
+from blogpage.timeline import Posts, getseveral, getone, needs_pag, new_getseveral, new_getseveral
 
 from datetime import datetime
 
@@ -47,17 +47,25 @@ def index(pag = 0):
         way=way
     )
     '''
+
+    ''' new several
     posts = new_getseveral(
         tipo='np',
         which='main',
         current_user=g.user['id'],
         page=pag
     )
+    '''
 
     '''
     if way == 'asc':
         posts.reverse()
     '''
+
+
+    #posts as a class
+    psts = Posts(g.user['id'], 'main')
+    posts, navi = psts.getseveralin(pag)
 
     print('hasta aqui sin problemas')
 
@@ -65,7 +73,7 @@ def index(pag = 0):
         'blog/index.html', 
         posts=posts, 
         name=g.user['username'],
-        navi=needs_pag('global', pag),
+        navi=navi,
         pag=pag,
         num=len(posts)
     )
