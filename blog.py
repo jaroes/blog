@@ -16,24 +16,19 @@ from datetime import datetime
 
 bp = Blueprint('blog', __name__)
 
-@bp.route('/')
+@bp.route('/', methods=['GET', 'POST'])
 @bp.route('/<int:pag>', methods=['GET', 'POST'])
 @login_required
 def index(pag = 0):
-    #posts as a class
-    #psts = Posts(g.user['id'], 'main')
-    #posts, navi = psts.getseveralin(pag)
-    
     posts = Posts('main')
-    feed, navi, num, user_id = posts.get_posts()
+    feed, navi, num, user_id = posts.get_posts(pag, None)
     context = dict(
         posts=feed,
         navi=navi,
-        name=user_id,
+        name=g.user['username'],
         pag=pag,
         num=num
     )
-
     return render_template('blog/index.html', **context)
     
 
@@ -49,35 +44,13 @@ def profile(usr = None, pag = None):
             return redirect(url_for('auth.login'))
         else:
             usr = g.user['username']
-            
-    pag = 0
-    limit_d = '1999-01-01 00:00:00'
-    limit_t = '2999-01-01 00:00:00'
-    way = 'desc'
-    if request.method == 'POST':
-        try:
-            if request.form['limit_d'] is not None:
-                limit_d = request.form['limit_d']
-        except:
-            way = 'desc'
-
-        try:
-            if request.form['limit_t'] is not None:
-                limit_t = request.form['limit_t']
-        except:
-            way = 'asc'
-    
-    #posts = getpost_profile(g.user['id'], usr, limit_d, limit_t, way)
-    posts = getseveral(
-        tipo='p',
-        which='profile',
-        current_user=g.user['id'],
-        limit_d=limit_d,
-        limit_t=limit_t,
-        way=way,
-        id=usr
-    )
+        print('pasé yo pelotudo')
+        pag = 0
+        
+    posts = Posts('profile', usr)
+    feed, nav, num, user = posts.get_posts(pag, usr)
     db, cursor = get_db()
+    
     cursor.execute(
         '''
         select p.id, p.birthday, p.bio, \
@@ -87,21 +60,15 @@ def profile(usr = None, pag = None):
         ''', (usr, )
     )
     user_info = cursor.fetchone()
-
-    if way == 'asc':
-        posts.reverse()
-
-
-    #navi = getpag('profile', user_info['id'], pag)
-    navi = needs_pag('profile_posts', pag, usr)
+    print(pag)
     return render_template(
         'blog/profile.html',
-        posts=posts,
+        posts=feed,
         pf=user_info,
-        name=g.user['username'],
-        navi=navi,
+        name=usr,
+        navi=nav,
         pag=pag,
-        num=len(posts),
+        num=num,
         edition=(g.user['id'] == user_info['id'])
     )
 

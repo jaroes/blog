@@ -1,4 +1,3 @@
-from blogpage.blog import comment
 from flask import g
 from blogpage.db import get_db
 from datetime import datetime
@@ -257,50 +256,57 @@ class From_DB:
     def new_getseveral(self, tipo, which, page, per_page=10, id=None):
         db, c = get_db()
         to_fetch = 'base'
+        print(id)
         if which == 'post' and tipo == 'comment':
             to_fetch = 'unique'
 
-        sql = data[tipo][to_fetch] + data[tipo][which]
+        sql = self.data[tipo][to_fetch] + self.data[tipo][which]
         if id is None:
             c.execute( sql,(self.user, page, per_page) )
         else:
             c.execute( sql,(self.user, id, page, per_page) )
+        print('salimo bien?')
         return c.fetchall()
 
 
 class Posts(From_DB):
-    def __init__(self, Post_to):
+    def __init__(self, Post_to, id=None):
         super().__init__()
         self.mode=Post_to
-        self.total=self.get_entries()
+        self.db, self.c = get_db()
+        self.total=self.get_entries(id)
         self.relatives = dict(
             next=None,
             back=None
         )
-        self.db, self.c = get_db()
 
-    def get_entries(self, id=None):
+    def get_entries(self, id):
         if id is None:
             print('voy yo 2')
             self.c.execute(paged_by_set['global'])
         else:
             print('no sé wn')
-            self.c.execute(paged_by_set['profile_post'], (id, ))
+            self.c.execute(paged_by_set['profile_posts'], (id, ))
         entradas = self.c.fetchone()
+        print(entradas)
         return entradas['entries']
 
 
     def get_a_post(self, id):
         return super().getone('post', id)
     
-    def get_posts(self, page, paged_by=10):
+    def get_posts(self, page, username, paged_by=10):
         posts = super().new_getseveral(
-            'comment', self.mode, page, paged_by
+            'post', self.mode, page*10, paged_by, username
         )
+        print('page en 1 es {}'.format(page))
         if page > 0:
             self.relatives['back'] = True
-        if (page+1) * paged_by < (self.entries*10):
+        if (page+1) * paged_by < (self.total*10):
             self.relatives['next'] = True
+        print(self.relatives)
+        print('page+1*paged_by={}'.format((page+1) * paged_by))
+        print('total={}'.format(self.total*10))
         return posts, self.relatives, len(posts), self.user
 
     def delete(self, id):
