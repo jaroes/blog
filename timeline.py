@@ -1,6 +1,7 @@
-from os import DirEntry
-from flask.globals import current_app
+from blogpage.blog import comment
+from flask import g
 from blogpage.db import get_db
+from datetime import datetime
 
 paged_by_set = {
     'global': 'select entries from metadata where id = 1',
@@ -186,7 +187,7 @@ class get_from_db:
 
 
 
-
+'''
 class Posts:
     def __init__(self, current_user, for_what, pilin=None):
         self.context=for_what
@@ -234,3 +235,199 @@ class Posts:
         if (page+1) * paged_by < (self.entries*10):
             self.relatives['next'] = True
         return outt, self.relatives
+
+'''
+
+
+
+class From_DB:
+    def __init__(self):
+        self.user=g.user['id']
+        self.data = dict(
+            post=new_po,
+            comment=co
+        )
+    
+    def getone(self, tipo, id):
+        db, c = get_db()
+        sql = self.data[tipo]['base'] + self.data[tipo]['one']
+        c.execute(sql, (self.user, id))
+        return c.fetchone()
+
+    def new_getseveral(self, tipo, which, page, per_page=10, id=None):
+        db, c = get_db()
+        to_fetch = 'base'
+        if which == 'post' and tipo == 'comment':
+            to_fetch = 'unique'
+
+        sql = data[tipo][to_fetch] + data[tipo][which]
+        if id is None:
+            c.execute( sql,(self.user, page, per_page) )
+        else:
+            c.execute( sql,(self.user, id, page, per_page) )
+        return c.fetchall()
+
+
+class Posts(From_DB):
+    def __init__(self, Post_to):
+        super().__init__()
+        self.mode=Post_to
+        self.total=self.get_entries()
+        self.relatives = dict(
+            next=None,
+            back=None
+        )
+        self.db, self.c = get_db()
+
+    def get_entries(self, id=None):
+        if id is None:
+            print('voy yo 2')
+            self.c.execute(paged_by_set['global'])
+        else:
+            print('no sé wn')
+            self.c.execute(paged_by_set['profile_post'], (id, ))
+        entradas = self.c.fetchone()
+        return entradas['entries']
+
+
+    def get_a_post(self, id):
+        return super().getone('post', id)
+    
+    def get_posts(self, page, paged_by=10):
+        posts = super().new_getseveral(
+            'comment', self.mode, page, paged_by
+        )
+        if page > 0:
+            self.relatives['back'] = True
+        if (page+1) * paged_by < (self.entries*10):
+            self.relatives['next'] = True
+        return posts, self.relatives, len(posts), self.user
+
+    def delete(self, id):
+        self.c.execute(
+            '''
+            delete from post where \
+            id = %s and created_by = \
+            %s
+            ''', (id, self.user)
+        )
+        self.c.execute(
+            '''
+            update profile set entries = \
+            entries - 0.1 where id = %s
+            ''', (self.user)
+        )
+        self.c.execute(
+            '''
+            update metadata set entries = \
+            entries - 0.1 where id = 1
+            '''
+        )
+        self.db.commit()
+
+    def edit(self, id, title, content):
+        self.c.execute(
+            '''
+            update post set content = %s, title = %s, \
+            last_modified = %s where id = %s and created_by = %s
+            ''', (content, title, datetime.now(), id, self.user)
+        )
+        self.db.commit()
+
+    def create(self, title, content):
+        self.c.execute(
+            'insert into post (created_by, title, content) values (%s, %s, %s)',
+            (self.user, title, content)
+        )
+        self.c.execute(
+            'update profile set entries = entries + 0.1 where id = %s',
+            (self.user, )
+        )
+        self.c.execute(
+            'update metadata set entries = entries + 0.1 where id = 1'
+        )
+        self.db.commit()
+
+
+class Comments(From_DB):
+    def __init__(self, Post_to):
+        super().__init__()
+        self.mode=Post_to
+        self.total=self.get_comments()
+        self.relatives = dict(
+            next=None,
+            back=None
+        )
+        self.db, self.c = get_db()
+
+    def get_entries(self, id=None):
+        if id is None:
+            print('voy yo 2')
+            self.c.execute(paged_by_set['profile_comment'])
+        else:
+            print('no sé wn')
+            self.c.execute(paged_by_set['post_comments'], (id, ))
+        entradas = self.c.fetchone()
+        return entradas['comments']
+
+
+    def get_a_comment(self, id):
+        return super().getone('comment', id)
+    
+    def get_posts(self, page, paged_by=10):
+        posts = super().new_getseveral(
+            'comment', self.mode, page, paged_by
+        )
+        if page > 0:
+            self.relatives['back'] = True
+        if (page+1) * paged_by < (self.entries*10):
+            self.relatives['next'] = True
+        return posts, self.relatives, len(posts), self.user
+
+    def delete(self, id):
+        self.c.execute(
+            '''
+            delete from post where \
+            id = %s and created_by = \
+            %s
+            ''', (id, self.user)
+        )
+        self.c.execute(
+            '''
+            update profile set entries = \
+            entries - 0.1 where id = %s
+            ''', (self.user)
+        )
+        self.c.execute(
+            '''
+            update metadata set entries = \
+            entries - 0.1 where id = 1
+            '''
+        )
+        self.db.commit()
+
+    def edit(self, id, title, content):
+        self.c.execute(
+            '''
+            update post set content = %s, title = %s, \
+            last_modified = %s where id = %s and created_by = %s
+            ''', (content, title, datetime.now(), id, self.user)
+        )
+        self.db.commit()
+
+    def create(self, title, content):
+        self.c.execute(
+            'insert into post (created_by, title, content) values (%s, %s, %s)',
+            (self.user, title, content)
+        )
+        self.c.execute(
+            'update profile set entries = entries + 0.1 where id = %s',
+            (self.user, )
+        )
+        self.c.execute(
+            'update metadata set entries = entries + 0.1 where id = 1'
+        )
+        self.db.commit()
+        
+
+        

@@ -20,63 +20,21 @@ bp = Blueprint('blog', __name__)
 @bp.route('/<int:pag>', methods=['GET', 'POST'])
 @login_required
 def index(pag = 0):
-    limit_d = '1999-01-01 00:00:00'
-    limit_t = '2999-01-01 00:00:00'
-    way = 'desc'
-    if request.method == 'POST':
-        try:
-            if request.form['limit_d'] is not None:
-                limit_d = request.form['limit_d']
-        except:
-            way = 'desc'
-
-        try:
-            if request.form['limit_t'] is not None:
-                limit_t = request.form['limit_t']
-        except:
-            way = 'asc'
-
-    #posts = getpost_all(g.user['id'], limit_t, limit_d, way)
-    '''
-    posts = getseveral(
-        tipo='p',
-        which='main',
-        current_user=g.user['id'],
-        limit_d=limit_d,
-        limit_t=limit_t,
-        way=way
-    )
-    '''
-
-    ''' new several
-    posts = new_getseveral(
-        tipo='np',
-        which='main',
-        current_user=g.user['id'],
-        page=pag
-    )
-    '''
-
-    '''
-    if way == 'asc':
-        posts.reverse()
-    '''
-
-
     #posts as a class
-    psts = Posts(g.user['id'], 'main')
-    posts, navi = psts.getseveralin(pag)
-
-    print('hasta aqui sin problemas')
-
-    return render_template(
-        'blog/index.html', 
-        posts=posts, 
-        name=g.user['username'],
+    #psts = Posts(g.user['id'], 'main')
+    #posts, navi = psts.getseveralin(pag)
+    
+    posts = Posts('main')
+    feed, navi, num, user_id = posts.get_posts()
+    context = dict(
+        posts=feed,
         navi=navi,
+        name=user_id,
         pag=pag,
-        num=len(posts)
+        num=num
     )
+
+    return render_template('blog/index.html', **context)
     
 
 
