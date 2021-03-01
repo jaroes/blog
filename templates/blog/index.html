@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% import './blog/comp.html' as macros %}
 
 {% block title %}Timeline{% endblock %}
 
@@ -18,25 +19,7 @@
     </div>
     <br />
     {% for post in posts %}
-    <div class="posts">
-        <div class="posthead">
-            <div class='title'>
-                <a href="/post/{{ post.id }}">
-                    <strong>{{ post.title }}</strong>
-                </a>
-            </div>
-            <a class="details" href="profile/{{ post.username }}">Autor: {{ post.username }}</a>
-            <span class="details">{{ post.last_modified }}</span>
-            <span class="details">{{ post.id }}</span>
-            {% if post.post_owner %}
-                <span><a href="/edit/{{ post.id }}">Editar</a></span>
-                <span><a href="/delete/{{ post.id }}">Borrar</a></span>
-            {% endif %}
-        </div>
-        <div>{{ post.content }}</div>
-        <br />
-    </div>
-    <br />
+        {{ macros.render_feed(post) }}
     {% endfor %}
     
     

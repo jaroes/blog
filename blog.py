@@ -38,7 +38,7 @@ def index(pag = 0):
 @bp.route('/profile/<usr>/<int:pag>', methods=['GET', 'POST'])
 def profile(usr = None, pag = None):
     
-    #in case an unlogged enter to profile
+    #in case an unlogged enter to /profile/
     if usr is None and pag is None:
         if g.user == None:
             return redirect(url_for('auth.login'))
@@ -46,7 +46,7 @@ def profile(usr = None, pag = None):
             usr = g.user['username']
         print('pasé yo pelotudo')
         pag = 0
-        
+
     posts = Posts('profile', usr)
     feed, nav, num, user = posts.get_posts(pag, usr)
     db, cursor = get_db()
