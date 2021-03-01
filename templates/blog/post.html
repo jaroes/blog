@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% import './blog/comp.html' as macros %}
 
 {% block title %}Timeline{% endblock %}
 
@@ -54,18 +55,5 @@
     <br />
     {% endfor %}
     
-    {% if nav['back'] %}
-        <form method="POST" action="/post/{{ pst.id }}/{{ pag - 1 }}">
-            <button name="limit_d" id="limit_d" value="{{ comms[0].commented_at }}">
-                Atras
-            </button>
-        </form>
-    {% endif %}
-    {% if nav['next'] %}
-        <form method="POST" action="/post/{{ pst.id }}/{{ pag + 1 }}">
-            <button name="limit_t" id="limit_t" value="{{ comms[num - 1].commented_at }}">
-                Adelante
-            </button>
-        </form>
-    {% endif %}
+    {{ macros.render_navb(navi) }}
 {% endblock %}
